@@ -2,6 +2,7 @@ package `is`.xyz.mpv
 
 import `is`.xyz.mpv.databinding.PlayerBinding
 import `is`.xyz.mpv.MPVLib.MpvEvent
+import kotlin.math.*
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
@@ -191,12 +192,27 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     @SuppressLint("ClickableViewAccessibility")
     private fun initListeners() {
         with (binding) {
+            backBtn.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
             prevBtn.setOnClickListener { playlistPrev() }
             nextBtn.setOnClickListener { playlistNext() }
+            rewindBtn.setOnClickListener {
+                MPVLib.command(arrayOf("seek", "-10", "relative"))
+                showDoubleTapRipple(false)
+            }
+            forwardBtn.setOnClickListener {
+                MPVLib.command(arrayOf("seek", "10", "relative"))
+                showDoubleTapRipple(true)
+            }
+            topAspectBtn.setOnClickListener { cycleAspectRatio() }
+            topAspectBtn.setOnLongClickListener { openAspectRatioPicker(); true }
+            rotateBtn.setOnClickListener {
+                autoRotationMode = "manual"
+                cycleOrientation()
+            }
             cycleAudioBtn.setOnClickListener { cycleAudio() }
             cycleSubsBtn.setOnClickListener { cycleSub() }
             playBtn.setOnClickListener { player.cyclePause() }
-            cycleDecoderBtn.setOnClickListener { player.cycleHwdec() }
+            cycleDecoderBtn.setOnClickListener { pickDecoder() }
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
             topLockBtn.setOnClickListener { lockUI() }
             topPiPBtn.setOnClickListener { goIntoPiP() }
@@ -267,7 +283,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         // Initialize listeners for the player view
         initListeners()
 
-        gestures = TouchGestures(this)
+        gestures = TouchGestures(this, this)
 
         // set up initial UI state
         readSettings()
@@ -831,17 +847,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         }
 
         if (super.dispatchTouchEvent(ev)) {
-            // reset delay if the event has been handled
-            // ideally we'd want to know if the event was delivered to controls, but we can't
             if (binding.controls.visibility == View.VISIBLE && !fadeRunnable.hasStarted)
                 showControls()
-            if (ev.action == MotionEvent.ACTION_UP)
-                return true
-        }
-        if (ev.action == MotionEvent.ACTION_DOWN)
-            mightWantToToggleControls = true
-        if (ev.action == MotionEvent.ACTION_UP && mightWantToToggleControls) {
-            toggleControls()
+            return true
         }
         return true
     }
@@ -1588,6 +1596,58 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
+    private var currentAspectIndex = 0
+    private fun cycleAspectRatio() {
+        val aspectModes = arrayOf(
+            Pair("Fit to screen", "-1" to 0.0),
+            Pair("Crop / Zoom", "-1" to 1.0),
+            Pair("16:9", "16:9" to 0.0),
+            Pair("Stretch", "stretch" to 0.0),
+            Pair("100% Original", "-1" to 0.0)
+        )
+        currentAspectIndex = (currentAspectIndex + 1) % aspectModes.size
+        val (name, params) = aspectModes[currentAspectIndex]
+        val (ratio, panscanVal) = params
+
+        if (ratio == "stretch") {
+            val dm = resources.displayMetrics
+            val screenAspect = dm.widthPixels.toDouble() / dm.heightPixels.toDouble()
+            MPVLib.setPropertyString("video-aspect-override", screenAspect.toString())
+            MPVLib.setPropertyDouble("panscan", 0.0)
+        } else {
+            MPVLib.setPropertyString("video-aspect-override", ratio)
+            MPVLib.setPropertyDouble("panscan", panscanVal)
+        }
+        showToast(name, true)
+    }
+
+    private fun openAspectRatioPicker() {
+        val ratios = resources.getStringArray(R.array.aspect_ratios)
+        with (AlertDialog.Builder(this)) {
+            setItems(R.array.aspect_ratio_names) { dialog, item ->
+                if (ratios[item] == "panscan") {
+                    MPVLib.setPropertyString("video-aspect-override", "-1")
+                    MPVLib.setPropertyDouble("panscan", 1.0)
+                } else {
+                    MPVLib.setPropertyString("video-aspect-override", ratios[item])
+                    MPVLib.setPropertyDouble("panscan", 0.0)
+                }
+                showToast(resources.getStringArray(R.array.aspect_ratio_names)[item], true)
+                dialog.dismiss()
+            }
+            create().show()
+        }
+    }
+
+    private fun showDoubleTapRipple(isForward: Boolean) {
+        val view = if (isForward) binding.doubleTapRight else binding.doubleTapLeft
+        view.alpha = 1f
+        view.visibility = View.VISIBLE
+        view.animate().alpha(0f).setDuration(500L).withEndAction {
+            view.visibility = View.GONE
+        }.start()
+    }
+
     private var activityResultCallbacks: MutableMap<Int, ActivityResultCallback> = mutableMapOf()
     private fun openFilePickerFor(requestCode: Int, title: String, skip: Int?, callback: ActivityResultCallback) {
         val intent = Intent(this, FilePickerActivity::class.java)
@@ -1626,49 +1686,19 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateAudioUI() {
-        val audioButtons = arrayOf(R.id.prevBtn, R.id.cycleAudioBtn, R.id.playBtn,
-                R.id.cycleSpeedBtn, R.id.nextBtn)
-        val videoButtons = arrayOf(R.id.cycleAudioBtn, R.id.cycleSubsBtn, R.id.playBtn,
-                R.id.cycleDecoderBtn, R.id.cycleSpeedBtn)
-
         val shouldUseAudioUI = isPlayingAudioOnly()
         if (shouldUseAudioUI == useAudioUI)
             return
         useAudioUI = shouldUseAudioUI
         Log.v(TAG, "Audio UI: $useAudioUI")
 
-        val seekbarGroup = binding.controlsSeekbarGroup
-        val buttonGroup = binding.controlsButtonGroup
-
         if (useAudioUI) {
-            // Move prev/next file from seekbar group to buttons group
-            Utils.viewGroupMove(seekbarGroup, R.id.prevBtn, buttonGroup, 0)
-            Utils.viewGroupMove(seekbarGroup, R.id.nextBtn, buttonGroup, -1)
-
-            // Change button layout of buttons group
-            Utils.viewGroupReorder(buttonGroup, audioButtons)
-
-            // Show song title and more metadata
             binding.controlsTitleGroup.visibility = View.VISIBLE
-            Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.titleTextView, R.id.minorTitleTextView))
             updateMetadataDisplay()
-
             showControls()
         } else {
-            Utils.viewGroupMove(buttonGroup, R.id.prevBtn, seekbarGroup, 0)
-            Utils.viewGroupMove(buttonGroup, R.id.nextBtn, seekbarGroup, -1)
-
-            Utils.viewGroupReorder(buttonGroup, videoButtons)
-
-            // Show title only depending on settings
-            if (showMediaTitle) {
-                binding.controlsTitleGroup.visibility = View.VISIBLE
-                Utils.viewGroupReorder(binding.controlsTitleGroup, arrayOf(R.id.fullTitleTextView))
-                updateMetadataDisplay()
-            } else {
-                binding.controlsTitleGroup.visibility = View.GONE
-            }
-
+            binding.controlsTitleGroup.visibility = View.GONE
+            updateMetadataDisplay()
             hideControls() // do NOT use fade runnable
         }
 
@@ -1685,11 +1715,10 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun updateMetadataDisplay() {
-        if (!useAudioUI) {
-            if (showMediaTitle)
-                binding.fullTitleTextView.text = psc.meta.formatTitle()
-        } else {
-            binding.titleTextView.text = psc.meta.formatTitle()
+        val title = psc.meta.formatTitle() ?: (intent?.data?.lastPathSegment ?: "")
+        binding.fullTitleTextView.text = title
+        if (useAudioUI) {
+            binding.titleTextView.text = title
             binding.minorTitleTextView.text = psc.meta.formatArtistAlbum()
         }
     }
@@ -2020,6 +2049,9 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 MPVLib.command(arrayOf("script-binding", "stats/display-page-${this.statsLuaMode}-toggle"))
             }
 
+            currentZoom = 0.0
+            currentPanX = 0.0
+            currentPanY = 0.0
             playbackHasStarted = true
         }
 
@@ -2036,15 +2068,39 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     /** 0 = initial, 1 = paused, 2 = was already paused */
     private var pausedForSeek = 0
 
-    private fun fadeGestureText() {
-        fadeHandler.removeCallbacks(fadeRunnable3)
-        binding.gestureTextView.visibility = View.VISIBLE
+    private var currentZoom = 0.0
+    private var currentPanX = 0.0
+    private var currentPanY = 0.0
 
-        fadeHandler.postDelayed(fadeRunnable3, 500L)
+    private fun resetZoom() {
+        currentZoom = 0.0
+        currentPanX = 0.0
+        currentPanY = 0.0
+        MPVLib.setPropertyDouble("video-zoom", 0.0)
+        MPVLib.setPropertyDouble("video-pan-x", 0.0)
+        MPVLib.setPropertyDouble("video-pan-y", 0.0)
+        binding.zoomPercentTxt.text = "100%"
+        binding.zoomDescTxt.text = "Fit to Screen"
+        binding.zoomCard.visibility = View.VISIBLE
+        fadeHandler.removeCallbacks(fadeHUDsRunnable)
+        fadeHandler.postDelayed(fadeHUDsRunnable, 800L)
     }
 
-    override fun onPropertyChange(p: PropertyChange, diff: Float) {
-        val gestureTextView = binding.gestureTextView
+    private val fadeHUDsRunnable = Runnable {
+        binding.seekCard.visibility = View.GONE
+        binding.brightnessCard.visibility = View.GONE
+        binding.volumeCard.visibility = View.GONE
+        binding.zoomCard.visibility = View.GONE
+        binding.gestureTextView.visibility = View.GONE
+    }
+
+    private fun fadeGestureText() {
+        fadeHandler.removeCallbacks(fadeHUDsRunnable)
+        fadeHandler.postDelayed(fadeHUDsRunnable, 600L)
+    }
+
+    override fun onPropertyChange(p: PropertyChange, diff: Float, extra: Float) {
+        fadeHandler.removeCallbacks(fadeHUDsRunnable)
         when (p) {
             /* Drag gestures */
             PropertyChange.Init -> {
@@ -2062,10 +2118,6 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 if (!isPlayingAudio)
                     maxVolume = 0 // disallow volume gesture if no audio
                 pausedForSeek = 0
-
-                fadeHandler.removeCallbacks(fadeRunnable3)
-                gestureTextView.visibility = View.VISIBLE
-                gestureTextView.text = ""
             }
             PropertyChange.Seek -> {
                 // disable seeking when duration is unknown
@@ -2078,6 +2130,11 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                         player.paused = true
                 }
 
+                binding.brightnessCard.visibility = View.GONE
+                binding.volumeCard.visibility = View.GONE
+                binding.zoomCard.visibility = View.GONE
+                binding.seekCard.visibility = View.VISIBLE
+
                 val newPosExact = (initialSeek + diff).coerceIn(0f, duration)
                 val newPos = newPosExact.roundToInt()
                 val newDiff = (newPosExact - initialSeek).roundToInt()
@@ -2087,49 +2144,123 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                     // seek faster than assigning to timePos but less precise
                     MPVLib.command(arrayOf("seek", "$newPosExact", "absolute+keyframes"))
                 }
-                // Note: don't call updatePlaybackPos() here because mpv will seek a timestamp
-                // actually present in the file, and not the exact one we specified.
 
                 val posText = Utils.prettyTime(newPos)
                 val diffText = Utils.prettyTime(newDiff, true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, posText, diffText)
+                binding.seekDeltaTxt.text = diffText
+                binding.seekTargetTxt.text = "$posText / ${Utils.prettyTime(psc.durationSec)}"
             }
             PropertyChange.Volume -> {
                 if (maxVolume == 0)
                     return
-                val newVolume = (initialVolume + (diff * maxVolume).toInt()).coerceIn(0, maxVolume)
-                val newVolumePercent = 100 * newVolume / maxVolume
-                audioManager!!.setStreamVolume(STREAM_TYPE, newVolume, 0)
+                binding.seekCard.visibility = View.GONE
+                binding.brightnessCard.visibility = View.GONE
+                binding.zoomCard.visibility = View.GONE
+                binding.volumeCard.visibility = View.VISIBLE
 
-                gestureTextView.text = getString(R.string.ui_volume, newVolumePercent)
+                // Allow 200% volume boost when swiping beyond maximum system volume (MX Player signature)
+                val targetStep = initialVolume + (diff * maxVolume * 1.5f).toInt()
+                if (targetStep > maxVolume) {
+                    val boostFactor = ((targetStep - maxVolume).toFloat() / maxVolume * 100).toInt().coerceIn(0, 100)
+                    val totalBoost = 100 + boostFactor
+                    audioManager!!.setStreamVolume(STREAM_TYPE, maxVolume, 0)
+                    MPVLib.setPropertyInt("volume", totalBoost)
+
+                    binding.volumeIcon.setImageResource(R.drawable.ic_volume_boost_24dp)
+                    binding.volumeProgress.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.mx_boost_orange))
+                    binding.volumeText.text = "Boost $totalBoost%"
+                    binding.volumeProgress.max = 200
+                    binding.volumeProgress.progress = totalBoost
+                } else {
+                    val newVolume = targetStep.coerceIn(0, maxVolume)
+                    MPVLib.setPropertyInt("volume", 100)
+                    audioManager!!.setStreamVolume(STREAM_TYPE, newVolume, 0)
+
+                    val isMute = newVolume == 0
+                    binding.volumeIcon.setImageResource(if (isMute) R.drawable.ic_volume_mute_24dp else R.drawable.ic_volume_up_24dp)
+                    binding.volumeProgress.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.mx_blue))
+                    binding.volumeText.text = "$newVolume"
+                    binding.volumeProgress.max = maxVolume
+                    binding.volumeProgress.progress = newVolume
+                }
             }
             PropertyChange.Bright -> {
+                binding.seekCard.visibility = View.GONE
+                binding.volumeCard.visibility = View.GONE
+                binding.zoomCard.visibility = View.GONE
+                binding.brightnessCard.visibility = View.VISIBLE
+
                 val newBrightPercent = ((initialBright + diff).coerceIn(0f, 1f) * 100).roundToInt()
                 lastScreenBrightness = newBrightPercent
                 updateScreenBrightness()
 
-                gestureTextView.text = getString(R.string.ui_brightness, newBrightPercent)
+                binding.brightnessText.text = "$newBrightPercent%"
+                binding.brightnessProgress.progress = newBrightPercent
             }
             PropertyChange.Finalize -> {
                 if (pausedForSeek == 1)
                     player.paused = false
-                gestureTextView.visibility = View.GONE
+                fadeHandler.removeCallbacks(fadeHUDsRunnable)
+                fadeHandler.postDelayed(fadeHUDsRunnable, 600L)
             }
 
             /* Tap gestures */
+            PropertyChange.SingleTap -> {
+                toggleControls()
+            }
             PropertyChange.SeekFixed -> {
+                val isForward = diff > 0
+                showDoubleTapRipple(isForward)
+
                 val seekTime = diff * 10f
-                val newPos = psc.positionSec + seekTime.toInt() // only for display
+                val newPos = psc.positionSec + seekTime.toInt()
                 MPVLib.command(arrayOf("seek", seekTime.toString(), "relative"))
 
+                binding.brightnessCard.visibility = View.GONE
+                binding.volumeCard.visibility = View.GONE
+                binding.zoomCard.visibility = View.GONE
+                binding.seekCard.visibility = View.VISIBLE
                 val diffText = Utils.prettyTime(seekTime.toInt(), true)
-                gestureTextView.text = getString(R.string.ui_seek_distance, Utils.prettyTime(newPos), diffText)
-                fadeGestureText()
+                binding.seekDeltaTxt.text = diffText
+                binding.seekTargetTxt.text = "${Utils.prettyTime(newPos)} / ${Utils.prettyTime(psc.durationSec)}"
+                fadeHandler.removeCallbacks(fadeHUDsRunnable)
+                fadeHandler.postDelayed(fadeHUDsRunnable, 600L)
             }
             PropertyChange.PlayPause -> player.cyclePause()
             PropertyChange.Custom -> {
                 val keycode = 0x10002 + diff.toInt()
                 MPVLib.command(arrayOf("keypress", "0x%x".format(keycode)))
+            }
+
+            /* Zoom and Pan gestures */
+            PropertyChange.Zoom -> {
+                if (diff > 0f) {
+                    val currentScale = 2.0.pow(currentZoom)
+                    val newScale = (currentScale * diff).coerceIn(0.5, 4.0)
+                    currentZoom = log2(newScale)
+                    MPVLib.setPropertyDouble("video-zoom", currentZoom)
+
+                    val percent = (newScale * 100).roundToInt()
+                    binding.zoomPercentTxt.text = "$percent%"
+                    binding.zoomDescTxt.text = if (percent == 100) "Fit to Screen" else "Pinch to Zoom"
+                    binding.seekCard.visibility = View.GONE
+                    binding.volumeCard.visibility = View.GONE
+                    binding.brightnessCard.visibility = View.GONE
+                    binding.zoomCard.visibility = View.VISIBLE
+                    fadeHandler.removeCallbacks(fadeHUDsRunnable)
+                    fadeHandler.postDelayed(fadeHUDsRunnable, 800L)
+                }
+            }
+            PropertyChange.Pan -> {
+                if (currentZoom > 0.02) {
+                    currentPanX = (currentPanX + diff).coerceIn(-1.5, 1.5)
+                    currentPanY = (currentPanY + extra).coerceIn(-1.5, 1.5)
+                    MPVLib.setPropertyDouble("video-pan-x", currentPanX)
+                    MPVLib.setPropertyDouble("video-pan-y", currentPanY)
+                }
+            }
+            PropertyChange.ResetZoom -> {
+                resetZoom()
             }
         }
     }

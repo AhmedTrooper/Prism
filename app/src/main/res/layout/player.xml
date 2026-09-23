@@ -1,187 +1,401 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#000000">
 
+    <!-- MPV Video Surface -->
     <is.xyz.mpv.MPVView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- so that insets can be applied as margins -->
+    <!-- Container for Insets / System Bars -->
     <RelativeLayout
         android:id="@+id/outside"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/controls"
-            style="?buttonBarStyle"
+        <!-- ================================================================= -->
+        <!-- MX PLAYER TOP BAR OVERLAY WITH GRADIENT SCRIM                    -->
+        <!-- ================================================================= -->
+        <RelativeLayout
+            android:id="@+id/top_controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginBottom="60dp"
-            android:background="#bf000000"
-            android:orientation="vertical">
+            android:layout_alignParentTop="true"
+            android:background="@drawable/top_scrim"
+            android:paddingStart="12dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="28dp">
 
+            <!-- Back Button and Video Title -->
             <LinearLayout
-                android:id="@+id/controls_title_group"
+                android:id="@+id/top_left_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/top_right_container"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-                <!-- These two are only used for audio -->
-                <TextView
-                    android:id="@+id/titleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/tint_normal"
-                    android:textSize="24sp"
-                    android:visibility="gone"
-                    tools:text="Song Title" />
+                <ImageButton
+                    android:id="@+id/backBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/dialog_cancel"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_arrow_back_24dp"
+                    app:tint="@color/mx_text_primary" />
 
-                <TextView
-                    android:id="@+id/minorTitleTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:textColor="@color/tint_normal"
-                    android:textSize="14sp"
-                    android:visibility="gone"
-                    tools:text="Artist / Album" />
-
-                <!-- This one for video title display -->
+                <!-- Video Title -->
                 <TextView
                     android:id="@+id/fullTitleTextView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="middle"
-                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:textColor="@color/tint_normal"
-                    android:textSize="16sp"
-                    tools:text="Video Title" />
-
+                    android:textColor="@color/mx_text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="Sample Movie 2026 1080p BluRay x265 AAC.mkv" />
             </LinearLayout>
 
+            <!-- Quick Action Badges and Buttons -->
             <LinearLayout
-                android:id="@+id/controls_seekbar_group"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layoutDirection="ltr"
-                android:orientation="horizontal"
-                android:weightSum="100">
-
-                <ImageButton
-                    android:id="@+id/prevBtn"
-                    style="?buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
-                    app:srcCompat="@drawable/ic_skip_previous_black_24dp"
-                    app:tint="@color/tint_normal" />
-
-                <TextView
-                    android:id="@+id/playbackPositionTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:textColor="@android:color/white"
-                    tools:text="00:00" />
-
-                <SeekBar
-                    android:id="@+id/playbackSeekbar"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="100"
-                    android:minHeight="24dp"
-                    android:progressBackgroundTint="@color/tint_seekbar_bg" />
-
-                <TextView
-                    android:id="@+id/playbackDurationTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:textColor="@android:color/white"
-                    tools:text="13:37" />
-
-                <ImageButton
-                    android:id="@+id/nextBtn"
-                    style="?buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minWidth="48dp"
-                    android:minHeight="48dp"
-                    app:srcCompat="@drawable/ic_skip_next_black_24dp"
-                    app:tint="@color/tint_normal" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/controls_button_group"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layoutDirection="ltr"
-                android:gravity="center"
+                android:id="@+id/top_right_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/cycleAudioBtn"
-                    style="?buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_audiotrack_black_24dp"
-                    app:tint="@color/tint_normal" />
-
-                <ImageButton
-                    android:id="@+id/cycleSubsBtn"
-                    style="?buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_subtitles_black_24dp"
-                    app:tint="@color/tint_normal" />
-
-                <ImageButton
-                    android:id="@+id/playBtn"
-                    style="?buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    app:tint="@color/tint_normal"
-                    tools:src="@drawable/ic_play_arrow_black_24dp" />
-
+                <!-- Signature MX HW/HW+/SW Decoder Badge -->
                 <Button
                     android:id="@+id/cycleDecoderBtn"
                     style="?buttonBarButtonStyle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/badge_background"
+                    android:gravity="center"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="8dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="2dp"
+                    android:textColor="@color/mx_text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
                     tools:text="HW+" />
 
-                <Button
-                    android:id="@+id/cycleSpeedBtn"
+                <!-- Audio Track Selector -->
+                <ImageButton
+                    android:id="@+id/cycleAudioBtn"
                     style="?buttonBarButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@android:color/white"
-                    tools:text="1.00X" />
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/track_audio"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_audiotrack_black_24dp"
+                    app:tint="@color/mx_text_primary" />
 
+                <!-- Subtitle Selector -->
+                <ImageButton
+                    android:id="@+id/cycleSubsBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/track_subs"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_subtitles_black_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Aspect Ratio Cycle Button -->
+                <ImageButton
+                    android:id="@+id/topAspectBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/aspect_ratio"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_aspect_ratio_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- PiP Button -->
+                <ImageButton
+                    android:id="@+id/topPiPBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="Picture in Picture"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_picture_in_picture_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Overflow Menu Button -->
+                <ImageButton
+                    android:id="@+id/topMenuBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/action_settings"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_more_vert_24dp"
+                    app:tint="@color/mx_text_primary" />
             </LinearLayout>
+
+        </RelativeLayout>
+
+        <!-- ================================================================= -->
+        <!-- GESTURE HUD OVERLAYS (SEEK, BRIGHTNESS, VOLUME, DOUBLE TAP)        -->
+        <!-- ================================================================= -->
+
+        <!-- Center Seek Scrub Card -->
+        <LinearLayout
+            android:id="@+id/seekCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/hud_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/seekDeltaTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/mx_blue_light"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                tools:text="+00:15" />
+
+            <TextView
+                android:id="@+id/seekTargetTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/mx_text_primary"
+                android:textSize="14sp"
+                tools:text="05:12 / 45:30" />
         </LinearLayout>
 
+        <!-- Center Zoom HUD Overlay -->
+        <LinearLayout
+            android:id="@+id/zoomCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/hud_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="24dp"
+            android:paddingBottom="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/zoomPercentTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/mx_blue_light"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                tools:text="100%" />
+
+            <TextView
+                android:id="@+id/zoomDescTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/mx_text_primary"
+                android:textSize="14sp"
+                tools:text="Fit to Screen" />
+        </LinearLayout>
+
+
+        <!-- Left Brightness HUD Overlay -->
+        <LinearLayout
+            android:id="@+id/brightnessCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="32dp"
+            android:background="@drawable/hud_background"
+            android:gravity="center"
+            android:minWidth="64dp"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/brightnessIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/video_brightness"
+                app:srcCompat="@drawable/ic_brightness_high_24dp"
+                app:tint="#FFEB3B" />
+
+            <TextView
+                android:id="@+id/brightnessText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/mx_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="70%" />
+
+            <ProgressBar
+                android:id="@+id/brightnessProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="48dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:max="100"
+                android:progress="70"
+                android:progressBackgroundTint="#44FFFFFF"
+                android:progressTint="#FFEB3B" />
+        </LinearLayout>
+
+        <!-- Right Volume HUD Overlay (with 200% Boost Indicator) -->
+        <LinearLayout
+            android:id="@+id/volumeCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/hud_background"
+            android:gravity="center"
+            android:minWidth="64dp"
+            android:orientation="vertical"
+            android:padding="12dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/volumeIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="Volume"
+                app:srcCompat="@drawable/ic_volume_up_24dp"
+                app:tint="@color/mx_blue" />
+
+            <TextView
+                android:id="@+id/volumeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:textColor="@color/mx_text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="15" />
+
+            <ProgressBar
+                android:id="@+id/volumeProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="48dp"
+                android:layout_height="4dp"
+                android:layout_marginTop="6dp"
+                android:max="30"
+                android:progress="15"
+                android:progressBackgroundTint="#44FFFFFF"
+                android:progressTint="@color/mx_blue" />
+        </LinearLayout>
+
+        <!-- Left Double-Tap Ripple Skip (-10s) -->
+        <LinearLayout
+            android:id="@+id/doubleTapLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="48dp"
+            android:background="@drawable/hud_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:contentDescription="Rewind"
+                app:srcCompat="@drawable/ic_replay_10_24dp"
+                app:tint="@color/mx_text_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="-10s"
+                android:textColor="@color/mx_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Right Double-Tap Ripple Skip (+10s) -->
+        <LinearLayout
+            android:id="@+id/doubleTapRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="48dp"
+            android:background="@drawable/hud_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:contentDescription="Forward"
+                app:srcCompat="@drawable/ic_forward_10_24dp"
+                app:tint="@color/mx_text_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="+10s"
+                android:textColor="@color/mx_text_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Diagnostic Stats Text -->
         <TextView
             android:id="@+id/statsTextView"
             android:layout_width="wrap_content"
@@ -189,15 +403,16 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="64dp"
             android:shadowColor="#000000"
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="1"
             android:textColor="#00FF00"
             android:visibility="gone"
-            tools:text="60 FPS"
-            tools:visibility="visible" />
+            tools:text="60 FPS" />
 
+        <!-- Legacy General Gesture Text (kept for fallback) -->
         <TextView
             android:id="@+id/gestureTextView"
             android:layout_width="match_parent"
@@ -209,70 +424,246 @@
             android:shadowRadius="4"
             android:textAlignment="center"
             android:textColor="#ffffff"
-            android:textSize="36sp"
+            android:textSize="32sp"
             android:textStyle="bold"
             android:visibility="gone"
             tools:text="[gesture]" />
 
+        <!-- ================================================================= -->
+        <!-- MX PLAYER BOTTOM BAR & TRANSPORT CONTROLS WITH GRADIENT SCRIM     -->
+        <!-- ================================================================= -->
         <LinearLayout
-            android:id="@+id/top_controls"
-            style="?buttonBarStyle"
-            android:layout_width="wrap_content"
+            android:id="@+id/controls"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:alpha="0.5"
-            android:background="#bf000000"
-            android:orientation="horizontal">
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bottom_scrim"
+            android:orientation="vertical"
+            android:paddingTop="20dp"
+            android:paddingBottom="12dp">
 
-            <ImageButton
-                android:id="@+id/topLockBtn"
-                style="?buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+            <!-- Audio-Mode Specific Metadata -->
+            <LinearLayout
+                android:id="@+id/controls_title_group"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="40dp"
-                android:minHeight="40dp"
-                android:padding="4dp"
-                app:srcCompat="@drawable/ic_lock_24dp"
-                app:tint="@color/tint_normal" />
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingBottom="8dp"
+                android:visibility="gone">
 
-            <ImageButton
-                android:id="@+id/topPiPBtn"
-                style="?buttonBarButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="40dp"
-                android:minHeight="40dp"
-                android:padding="4dp"
-                app:srcCompat="@drawable/ic_picture_in_picture_24dp"
-                app:tint="@color/tint_normal" />
+                <TextView
+                    android:id="@+id/titleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="@color/mx_text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Song Title" />
 
-            <ImageButton
-                android:id="@+id/topMenuBtn"
-                style="?buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:id="@+id/minorTitleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:gravity="center"
+                    android:textColor="@color/mx_text_secondary"
+                    android:textSize="13sp"
+                    tools:text="Artist / Album" />
+            </LinearLayout>
+
+            <!-- Sleek High-Precision Seekbar Row -->
+            <LinearLayout
+                android:id="@+id/controls_seekbar_group"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minWidth="40dp"
-                android:minHeight="40dp"
-                android:padding="4dp"
-                app:srcCompat="@drawable/ic_settings_black_24dp"
-                app:tint="@color/tint_normal" />
+                android:layoutDirection="ltr"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <TextView
+                    android:id="@+id/playbackPositionTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="44dp"
+                    android:textColor="@color/mx_text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="04:15" />
+
+                <SeekBar
+                    android:id="@+id/playbackSeekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxHeight="24dp"
+                    android:minHeight="24dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:progressDrawable="@drawable/mx_seekbar_progress"
+                    android:thumb="@drawable/mx_seekbar_thumb" />
+
+                <TextView
+                    android:id="@+id/playbackDurationTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:minWidth="44dp"
+                    android:textColor="@color/mx_text_primary"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    tools:text="45:30" />
+            </LinearLayout>
+
+            <!-- MX Player Transport Buttons Row -->
+            <LinearLayout
+                android:id="@+id/controls_button_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layoutDirection="ltr"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <!-- Screen / Kid Touch Lock Button (Bottom Left) -->
+                <ImageButton
+                    android:id="@+id/topLockBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="Lock Screen"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_lock_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Spacer to center transport buttons -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <!-- Prev Track -->
+                <ImageButton
+                    android:id="@+id/prevBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/dialog_prev"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_skip_previous_black_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Quick Rewind 10s -->
+                <ImageButton
+                    android:id="@+id/rewindBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginStart="4dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="Rewind 10 seconds"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_replay_10_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Big Circular Play/Pause Transport Button -->
+                <ImageButton
+                    android:id="@+id/playBtn"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/btn_circle_play"
+                    android:contentDescription="@string/btn_play"
+                    android:padding="12dp"
+                    app:srcCompat="@drawable/ic_play_arrow_black_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Quick Forward 10s -->
+                <ImageButton
+                    android:id="@+id/forwardBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="Forward 10 seconds"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_forward_10_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Next Track -->
+                <ImageButton
+                    android:id="@+id/nextBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/dialog_next"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_skip_next_black_24dp"
+                    app:tint="@color/mx_text_primary" />
+
+                <!-- Spacer to center transport buttons -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <!-- Playback Speed Pill Button -->
+                <Button
+                    android:id="@+id/cycleSpeedBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:textColor="@color/mx_text_primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="1.00X" />
+
+                <!-- Screen Orientation Rotate Lock Button -->
+                <ImageButton
+                    android:id="@+id/rotateBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:contentDescription="Rotate Screen"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_screen_rotation_24dp"
+                    app:tint="@color/mx_text_primary" />
+            </LinearLayout>
 
         </LinearLayout>
 
-        <!-- mismatching width/height so that the button appears exactly square?! -->
+        <!-- Floating Screen Unlock Button (Visible only when UI is locked) -->
         <ImageButton
             android:id="@+id/unlockBtn"
             android:layout_width="48dp"
-            android:layout_height="52dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="24dp"
+            android:background="@drawable/hud_background"
+            android:contentDescription="Unlock Screen"
+            android:padding="10dp"
             android:visibility="gone"
-            app:srcCompat="@drawable/ic_lock_open_24dp" />
+            app:srcCompat="@drawable/ic_lock_open_24dp"
+            app:tint="@color/mx_text_primary"
+            tools:visibility="visible" />
 
     </RelativeLayout>
 

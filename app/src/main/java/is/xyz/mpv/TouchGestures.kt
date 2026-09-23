@@ -1,11 +1,15 @@
 package `is`.xyz.mpv
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.graphics.PointF
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import kotlin.math.*
 
 enum class PropertyChange {
@@ -16,16 +20,25 @@ enum class PropertyChange {
     Finalize,
 
     /* Tap gestures */
+    SingleTap,
     SeekFixed,
     PlayPause,
     Custom,
+
+    /* Zoom and Pan gestures */
+    Zoom,
+    Pan,
+    ResetZoom,
 }
 
 internal interface TouchGesturesObserver {
-    fun onPropertyChange(p: PropertyChange, diff: Float)
+    fun onPropertyChange(p: PropertyChange, diff: Float, extra: Float = 0f)
 }
 
-internal class TouchGestures(private val observer: TouchGesturesObserver) {
+internal class TouchGestures(
+    private val context: Context,
+    private val observer: TouchGesturesObserver
+) {
 
     private enum class State {
         Up,
@@ -58,9 +71,37 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
     private var gestureHoriz = State.Down
     private var gestureVertLeft = State.Down
     private var gestureVertRight = State.Down
-    private var tapGestureLeft : PropertyChange? = null
-    private var tapGestureCenter : PropertyChange? = null
-    private var tapGestureRight : PropertyChange? = null
+    private var tapGestureLeft: PropertyChange? = null
+    private var tapGestureCenter: PropertyChange? = null
+    private var tapGestureRight: PropertyChange? = null
+
+    // Two-finger scale & pan
+    private var isMultiTouch = false
+    private val lastCenter = PointF()
+    private val scaleDetector = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScaleBegin(detector: ScaleGestureDetector): Boolean {
+            handler.removeCallbacks(singleTapRunnable)
+            if (state != State.Up && state != State.Down) {
+                sendPropertyChange(PropertyChange.Finalize, 0f)
+            }
+            state = State.Up
+            return true
+        }
+
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            val factor = detector.scaleFactor
+            if (factor > 0f && !factor.isNaN() && !factor.isInfinite()) {
+                sendPropertyChange(PropertyChange.Zoom, factor)
+            }
+            return true
+        }
+    })
+
+    // Single-tap delayed dispatcher
+    private val handler = Handler(Looper.getMainLooper())
+    private val singleTapRunnable = Runnable {
+        sendPropertyChange(PropertyChange.SingleTap, 0f)
+    }
 
     private inline fun checkFloat(vararg n: Float): Boolean {
         return !n.any { it.isInfinite() || it.isNaN() }
@@ -102,41 +143,10 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
         private const val DEADZONE = 5
     }
 
-    private fun processTap(p: PointF): Boolean {
-        if (state == State.Up) {
-            lastDownTime = SystemClock.uptimeMillis()
-            // 3 is another arbitrary value here that seems good enough
-            if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() > trigger * 3)
-                lastTapTime = 0 // last tap was too far away, invalidate
-            return true
-        }
-        // discard if any movement gesture took place
-        if (state != State.Down)
-            return false
-
-        val now = SystemClock.uptimeMillis()
-        if (now - lastDownTime >= TAP_DURATION) {
-            lastTapTime = 0 // finger was held too long, reset
-            return false
-        }
-        if (now - lastTapTime < TAP_DURATION) {
-            // [ Left 28% ] [    Center    ] [ Right 28% ]
-            if (p.x <= width * 0.28f)
-                tapGestureLeft?.let { sendPropertyChange(it, -1f); return true }
-            else if (p.x >= width * 0.72f)
-                tapGestureRight?.let { sendPropertyChange(it, 1f); return true }
-            else
-                tapGestureCenter?.let { sendPropertyChange(it, 0f); return true }
-            lastTapTime = 0
-        } else {
-            lastTapTime = now
-        }
-        return false
-    }
-
     private fun processMovement(p: PointF): Boolean {
+        if (isMultiTouch) return false
+
         // throttle events: only send updates when there's some movement compared to last update
-        // 3 here is arbitrary
         if (PointF(lastPos.x - p.x, lastPos.y - p.y).length() < trigger / 3)
             return false
         lastPos.set(p)
@@ -153,9 +163,11 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
                 if (abs(dx) > trigger) {
                     state = gestureHoriz
                     stateDirection = 0
+                    handler.removeCallbacks(singleTapRunnable)
                 } else if (abs(dy) > trigger) {
                     state = if (initialPos.x > width / 2) gestureVertRight else gestureVertLeft
                     stateDirection = 1
+                    handler.removeCallbacks(singleTapRunnable)
                 }
                 // send Init so that it has a chance to cache values before we start modifying them
                 if (state != State.Down)
@@ -171,8 +183,8 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
         return state != State.Up && state != State.Down
     }
 
-    private fun sendPropertyChange(p: PropertyChange, diff: Float) {
-        observer.onPropertyChange(p, diff)
+    private fun sendPropertyChange(p: PropertyChange, diff: Float, extra: Float = 0f) {
+        observer.onPropertyChange(p, diff, extra)
     }
 
     fun syncSettings(prefs: SharedPreferences, resources: Resources) {
@@ -208,28 +220,84 @@ internal class TouchGestures(private val observer: TouchGesturesObserver) {
             Log.w(TAG, "TouchGestures: ignoring invalid point ${e.x} ${e.y}")
             return false
         }
+
+        // Multi-touch pinch scale detector
+        if (e.pointerCount >= 2) {
+            scaleDetector.onTouchEvent(e)
+            val cx = (e.getX(0) + e.getX(1)) / 2f
+            val cy = (e.getY(0) + e.getY(1)) / 2f
+            if (isMultiTouch) {
+                val dx = (cx - lastCenter.x) / width
+                val dy = (cy - lastCenter.y) / height
+                if (abs(dx) > 0.001f || abs(dy) > 0.001f) {
+                    sendPropertyChange(PropertyChange.Pan, dx, dy)
+                }
+            }
+            lastCenter.set(cx, cy)
+            isMultiTouch = true
+            handler.removeCallbacks(singleTapRunnable)
+            return true
+        }
+
+        if (isMultiTouch && e.pointerCount < 2) {
+            isMultiTouch = false
+            state = State.Up
+            return true
+        }
+
         var gestureHandled = false
         val point = PointF(e.x, e.y)
-        when (e.action) {
-            MotionEvent.ACTION_UP -> {
-                gestureHandled = processMovement(point) or processTap(point)
-                if (state != State.Down)
-                    sendPropertyChange(PropertyChange.Finalize, 0f)
-                state = State.Up
-            }
+        when (e.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 // deadzone on top/bottom
                 if (e.y < height * DEADZONE / 100 || e.y > height * (100 - DEADZONE) / 100)
                     return false
                 initialPos.set(point)
-                processTap(point)
                 lastPos.set(point)
+                lastDownTime = SystemClock.uptimeMillis()
                 state = State.Down
-                // always return true on ACTION_DOWN to continue receiving events
                 gestureHandled = true
             }
             MotionEvent.ACTION_MOVE -> {
                 gestureHandled = processMovement(point)
+            }
+            MotionEvent.ACTION_UP -> {
+                val now = SystemClock.uptimeMillis()
+                if (state == State.Down) {
+                    val dist = PointF(lastPos.x - initialPos.x, lastPos.y - initialPos.y).length()
+                    if (dist < trigger && now - lastDownTime < TAP_DURATION) {
+                        if (now - lastTapTime < TAP_DURATION) {
+                            // Double tap!
+                            handler.removeCallbacks(singleTapRunnable)
+                            lastTapTime = 0
+                            if (point.x <= width * 0.32f) {
+                                tapGestureLeft?.let { sendPropertyChange(it, -1f) }
+                            } else if (point.x >= width * 0.68f) {
+                                tapGestureRight?.let { sendPropertyChange(it, 1f) }
+                            } else {
+                                tapGestureCenter?.let { sendPropertyChange(it, 0f) }
+                            }
+                            gestureHandled = true
+                        } else {
+                            // First tap - wait to confirm single tap
+                            lastTapTime = now
+                            handler.removeCallbacks(singleTapRunnable)
+                            handler.postDelayed(singleTapRunnable, 250L)
+                            gestureHandled = true
+                        }
+                    }
+                } else if (state != State.Up) {
+                    sendPropertyChange(PropertyChange.Finalize, 0f)
+                    gestureHandled = true
+                }
+                state = State.Up
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                handler.removeCallbacks(singleTapRunnable)
+                if (state != State.Up && state != State.Down) {
+                    sendPropertyChange(PropertyChange.Finalize, 0f)
+                }
+                state = State.Up
             }
         }
         return gestureHandled

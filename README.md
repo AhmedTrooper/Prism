@@ -1,39 +1,41 @@
-# mpv for Android
+# Prism
 
-[![Build Status](https://github.com/mpv-android/mpv-android/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/mpv-android/mpv-android/actions/workflows/build.yml)
+High-performance Android video player powered by libmpv. Clean UI, universal audio codecs.
 
-mpv-android is a video player for Android based on [libmpv](https://github.com/mpv-player/mpv).
+## Overview
 
-## Features
+Prism is an ad-free, high-performance Android video player combining the power of [libmpv](https://github.com/mpv-player/mpv) and FFmpeg with the intuitive, streamlined UI and UX of MX Player.
 
-* Hardware and software video decoding
-* Gesture-based seeking, volume/brightness control and more
-* libass support for styled subtitles
-* Secondary (or dual) subtitle support
-* High-quality rendering with advanced settings (scalers, debanding, interpolation, ...)
-* Play network streams with the "Open URL" function
-* Background playback, Picture-in-Picture, keyboard input supported
+Package: `com.ahmedtrooper.prism`
 
-### Library?
+## Key Features
 
-mpv-android is **not** a library/module (AAR) you can import into your app.
+* **MX Player Style Interface**:
+  - Clean edge-to-edge top bar and bottom transport bar with gradient scrims.
+  - Dedicated hardware decoder switcher badge (`HW+`, `HW`, `SW`) on the top bar.
+  - Aspect ratio switcher (Fit, Stretch, Crop, 16:9, 4:3, 21:9).
+  - Picture-in-Picture and background audio playback.
 
-If you'd like to use libmpv in your app you can use our code as inspiration.
-The important parts are [`MPVLib`](app/src/main/java/is/xyz/mpv/MPVLib.kt), [`BaseMPVView`](app/src/main/java/is/xyz/mpv/BaseMPVView.kt) and the [native code](app/src/main/jni/).
-Native code is built by [these scripts](buildscripts/).
+* **Advanced Media Library Browser**:
+  - MX Player folder view with automatic video count badges.
+  - Video list view with high-performance asynchronous thumbnail caching.
+  - Video duration pills, resolution badges (4K, 1080p, 720p, 480p), and file size indicators.
+  - Interactive search filtering and view mode switching (Folders / All Videos).
+  - Quick network stream loader ("Open URL").
 
-## Downloads
+* **Gesture Engine 2.0**:
+  - **Left vertical swipe**: Smooth screen brightness control with percentage HUD.
+  - **Right vertical swipe**: System volume control plus signature **200% software audio boost** with orange indicator.
+  - **Horizontal swipe**: Precision time scrub with center preview card (target time and delta).
+  - **Double-tap left/right**: Instant ±10s skip with animated ripple indicators.
+  - **Two-finger pinch-to-zoom & pan**: Smooth video zoom from 50% to 400% with real-time percentage badge and two-finger frame panning.
+  - **Single-tap**: Responsive control overlay toggle.
 
-You can download mpv-android from the [Releases section](https://github.com/mpv-android/mpv-android/releases) or
-
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=is.xyz.mpv)
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/is.xyz.mpv)
-
-**Note**: Android TV is supported, but only available on F-Droid or by installing the APK manually.
+* **Universal Codec & Subtitle Support**:
+  - Complete audio codec support including AC3, E-AC3, DTS, DTS-HD, TrueHD, and AAC.
+  - Advanced ASS/SSA stylized subtitle rendering via `libass`.
+  - Dual / secondary subtitle track support with precision ±0.1s sync delay adjustment.
 
 ## Building from source
 
-Take a look at the [README](buildscripts/README.md) inside the `buildscripts` directory.
-
-Some other documentation can be found at this [link](http://mpv-android.github.io/mpv-android/).
+See [`buildscripts/README.md`](buildscripts/README.md) for compiling native libmpv dependencies and building release APKs.

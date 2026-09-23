@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="FilePickerTheme" parent="Theme.AppCompat">
+    <style name="FilePickerTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="nnf_separator_color">@color/primary</item>
 
         <!-- Set these to match your theme -->

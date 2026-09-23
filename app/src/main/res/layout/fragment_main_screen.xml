@@ -1,85 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/logo"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:contentDescription="@string/mpv_activity"
-        app:srcCompat="@drawable/mpv_logo" />
-
-    <!-- FIXME this could look better -->
+    <!-- Top MX Player Styled App Bar -->
     <LinearLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="56dp"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
 
-        <Button
-            android:id="@+id/docBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
+        <TextView
+            android:id="@+id/appTitleTxt"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:drawableTop="@drawable/ic_file_open_48dp"
-            android:text="@string/action_open_doc_tree"
-            android:textColor="@android:color/primary_text_dark" />
+            android:text="@string/mpv_activity"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-        <Button
+        <!-- Search Action Button -->
+        <ImageButton
+            android:id="@+id/searchBtn"
+            style="?buttonBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="Search"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_search_24dp"
+            app:tint="?android:attr/textColorPrimary" />
+
+        <!-- View Mode Toggle (Folders vs All Videos) -->
+        <ImageButton
+            android:id="@+id/viewModeBtn"
+            style="?buttonBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="Toggle View Mode"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_folder_24dp"
+            app:tint="?android:attr/textColorPrimary" />
+
+        <!-- Network Stream / URL Button -->
+        <ImageButton
             android:id="@+id/urlBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/ic_link_48dp"
-            android:text="@string/action_open_url"
-            android:textColor="@android:color/primary_text_dark" />
+            style="?buttonBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_open_url"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_link_48dp"
+            app:tint="?android:attr/textColorPrimary" />
 
+        <!-- Browse Storage / File Picker Button -->
+        <ImageButton
+            android:id="@+id/filepickerBtn"
+            style="?buttonBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/file_picker_old"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_sd_card_white_24dp"
+            app:tint="?android:attr/textColorPrimary" />
+
+        <!-- Settings Button -->
+        <ImageButton
+            android:id="@+id/settingsBtn"
+            style="?buttonBarButtonStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_settings"
+            android:padding="8dp"
+            app:srcCompat="@drawable/ic_settings_black_24dp"
+            app:tint="?android:attr/textColorPrimary" />
     </LinearLayout>
 
+    <!-- Expandable Search Bar -->
     <LinearLayout
+        android:id="@+id/searchBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="Search"
+            app:srcCompat="@drawable/ic_search_24dp"
+            app:tint="@color/mx_blue" />
+
+        <EditText
+            android:id="@+id/searchEditText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="Search videos..."
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorSecondary"
+            android:textSize="15sp" />
+
+        <ImageButton
+            android:id="@+id/closeSearchBtn"
+            style="?buttonBarButtonStyle"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="Close search"
+            android:padding="6dp"
+            app:srcCompat="@drawable/ic_replay_10_24dp"
+            app:tint="?android:attr/textColorSecondary" />
+    </LinearLayout>
+
+    <!-- Breadcrumb Bar (Shown inside a Folder) -->
+    <LinearLayout
+        android:id="@+id/breadcrumbLayout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="16dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageButton
+            android:id="@+id/folderBackBtn"
+            style="?buttonBarButtonStyle"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="Back to folders"
+            android:padding="6dp"
+            app:srcCompat="@drawable/ic_arrow_back_24dp"
+            app:tint="@color/mx_blue" />
+
+        <TextView
+            android:id="@+id/currentFolderNameTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Download" />
+
+        <TextView
+            android:id="@+id/currentFolderCountTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12sp"
+            tools:text="8 videos" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#15FFFFFF" />
+
+    <!-- Main Content Frame -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_weight="1">
 
-        <Button
-            android:id="@+id/filepickerBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
+        <!-- Media List / Folder List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mediaRecyclerView"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/ic_folder_white_48dp"
-            android:text="@string/file_picker_old"
-            android:textColor="@android:color/primary_text_dark" />
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_media_video" />
 
-        <Button
-            android:id="@+id/settingsBtn"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:drawableTop="@drawable/ic_settings_black_48dp"
-            android:text="@string/action_settings"
-            android:textColor="@android:color/primary_text_dark" />
+        <!-- Permission Request Card -->
+        <LinearLayout
+            android:id="@+id/permissionCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="32dp"
+            android:background="@drawable/hud_background"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:visibility="gone"
+            tools:visibility="visible">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:contentDescription="Permission"
+                app:srcCompat="@drawable/ic_video_file_24dp"
+                app:tint="@color/mx_blue" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@string/option_remember_choice"
-        app:showText="false" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Storage Access Required"
+                android:textColor="@color/mx_text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Allow Prism access to your videos to browse your media library in MX Player style."
+                android:textColor="@color/mx_text_secondary"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/grantPermissionBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/badge_video_count"
+                android:backgroundTint="@color/mx_blue"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Grant Access"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Empty State View -->
+        <LinearLayout
+            android:id="@+id/emptyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone"
+            tools:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:alpha="0.3"
+                android:contentDescription="Empty"
+                app:srcCompat="@drawable/ic_video_file_24dp"
+                app:tint="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:id="@+id/emptyTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="No videos found"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/openUrlEmptyBtn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/badge_video_count"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:text="Open Network Stream"
+                android:textColor="@color/mx_blue"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

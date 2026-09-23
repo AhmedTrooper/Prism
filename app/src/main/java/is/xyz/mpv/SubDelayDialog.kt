@@ -51,7 +51,7 @@ internal class SubDelayDialog(
 
     /** Primary sub delay */
     var delay1: Double?
-        set(v) = binding.editText.setText(v!!.toString())
+        set(v) = binding.editText.setText(String.format(java.util.Locale.US, "%.1f", v ?: 0.0))
         get() = binding.editText.text.toString().toDoubleOrNull()
 
     /**
@@ -63,11 +63,11 @@ internal class SubDelayDialog(
                 it.isVisible = v != null
             }
             if (v != null)
-                binding.editText2.setText(v.toString())
+                binding.editText2.setText(String.format(java.util.Locale.US, "%.1f", v))
         }
         get() = binding.editText2.text.toString().toDoubleOrNull()
 
     companion object {
-        private const val STEP = 1.0
+        private const val STEP = 0.1
     }
 }
