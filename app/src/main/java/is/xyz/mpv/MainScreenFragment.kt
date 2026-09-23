@@ -2,9 +2,10 @@ package `is`.xyz.mpv
 
 import android.Manifest
 import android.app.Activity
-import android.content.ActivityNotFoundException
 import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
@@ -18,8 +19,10 @@ import android.util.Log
 import android.util.LruCache
 import android.util.Size
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -28,11 +31,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import `is`.xyz.mpv.databinding.FragmentMainScreenBinding
@@ -41,6 +46,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
@@ -56,7 +63,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         val id: Long,
         val name: String,
         val path: String,
-        var videoCount: Int = 0
+        var videoCount: Int = 0,
+        var hasNew: Boolean = false
     )
 
     data class MediaVideo(
@@ -70,16 +78,22 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         val height: Int,
         val dateModified: Long,
         val bucketId: Long,
-        val bucketName: String
+        val bucketName: String,
+        var playbackProgress: Int = 0, // 0 - 100
+        var isNew: Boolean = true
     )
 
     private val allVideos = mutableListOf<MediaVideo>()
     private val allFolders = mutableListOf<MediaFolder>()
     private var currentFolderId: Long? = null
-    private var isFolderMode = true
+    private var currentFolderName: String = ""
+
+    private var isFolderView = true
+    private var isGridMode = false
     private var searchQuery = ""
 
-    private val thumbnailCache = LruCache<Long, Bitmap>(80)
+    private val thumbnailCache = LruCache<Long, Bitmap>(120)
+    private lateinit var sharedPrefs: SharedPreferences
 
     private val backCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -87,6 +101,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 closeSearch()
             } else if (currentFolderId != null) {
                 exitFolder()
+            } else if (!isFolderView) {
+                isFolderView = true
+                applyFilterAndDisplay()
             } else {
                 isEnabled = false
                 requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -97,6 +114,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(requireContext())
 
         permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
@@ -126,7 +144,6 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         playerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             Log.v(TAG, "returned from player ($it)")
-            // Refresh to update resume progress bars
             scanMediaLibrary()
         }
     }
@@ -154,66 +171,101 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun setupUI() {
-        binding.mediaRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        updateLayoutManager()
 
-        // Top App Bar buttons
-        binding.searchBtn.setOnClickListener {
-            binding.searchBarLayout.isVisible = true
-            binding.searchEditText.requestFocus()
+        // Navigation Back Button
+        binding.navBackBtn.setOnClickListener {
+            if (binding.searchBarLayout.isVisible) {
+                closeSearch()
+            } else if (currentFolderId != null) {
+                exitFolder()
+            } else if (!isFolderView) {
+                isFolderView = true
+                applyFilterAndDisplay()
+            }
         }
 
+        // Search Action Button
+        binding.searchBtn.setOnClickListener {
+            openSearch()
+        }
+
+        // Close Search Button
         binding.closeSearchBtn.setOnClickListener {
             closeSearch()
         }
 
+        // Clear Search Text Button
+        binding.clearSearchTextBtn.setOnClickListener {
+            binding.searchEditText.setText("")
+        }
+
+        // Search Input Watcher
         binding.searchEditText.addTextChangedListener { text ->
             searchQuery = text?.toString()?.trim() ?: ""
+            binding.clearSearchTextBtn.isVisible = searchQuery.isNotEmpty()
             applyFilterAndDisplay()
         }
 
+        // View Mode Switch (Folders vs All Videos vs Grid)
         binding.viewModeBtn.setOnClickListener {
-            isFolderMode = !isFolderMode
-            currentFolderId = null
-            binding.viewModeBtn.setImageResource(
-                if (isFolderMode) R.drawable.ic_folder_24dp else R.drawable.ic_video_file_24dp
-            )
-            applyFilterAndDisplay()
-        }
-
-        binding.urlBtn.setOnClickListener {
-            val helper = Utils.OpenUrlDialog(requireContext())
-            with (helper) {
-                builder.setPositiveButton(R.string.dialog_ok) { _, _ -> playFile(helper.text) }
-                builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
-                create().show()
+            if (currentFolderId != null) {
+                // Inside folder: toggle Grid vs List
+                isGridMode = !isGridMode
+                updateLayoutManager()
+                applyFilterAndDisplay()
+            } else if (isFolderView) {
+                // At root: switch to All Videos
+                isFolderView = false
+                applyFilterAndDisplay()
+            } else {
+                // In All Videos: switch back to Folders
+                isFolderView = true
+                applyFilterAndDisplay()
             }
         }
 
-        binding.openUrlEmptyBtn.setOnClickListener {
-            binding.urlBtn.callOnClick()
+        // Refresh Media Library
+        binding.refreshBtn.setOnClickListener {
+            scanMediaLibrary()
         }
 
-        binding.filepickerBtn.setOnClickListener {
-            val i = Intent(context, FilePickerActivity::class.java)
-            i.putExtra("skip", FilePickerActivity.FILE_PICKER)
-            filePickerLauncher.launch(i)
+        // Overflow 3-Dots Menu
+        binding.moreMenuBtn.setOnClickListener { view ->
+            showOverflowMenu(view)
         }
 
-        binding.settingsBtn.setOnClickListener {
-            startActivity(Intent(context, PreferenceActivity::class.java))
-        }
-
-        binding.folderBackBtn.setOnClickListener {
-            exitFolder()
-        }
-
+        // Permission Card Button
         binding.grantPermissionBtn.setOnClickListener {
             requestStoragePermission()
         }
     }
 
+    private fun updateLayoutManager() {
+        if (isFolderView && currentFolderId == null) {
+            binding.mediaRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        } else {
+            if (isGridMode) {
+                binding.mediaRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+            } else {
+                binding.mediaRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+            }
+        }
+    }
+
+    private fun openSearch() {
+        binding.normalBarLayout.isVisible = false
+        binding.searchBarLayout.isVisible = true
+        binding.searchEditText.requestFocus()
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.showSoftInput(binding.searchEditText, InputMethodManager.SHOW_IMPLICIT)
+    }
+
     private fun closeSearch() {
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
         binding.searchBarLayout.isVisible = false
+        binding.normalBarLayout.isVisible = true
         binding.searchEditText.setText("")
         searchQuery = ""
         applyFilterAndDisplay()
@@ -221,8 +273,50 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     private fun exitFolder() {
         currentFolderId = null
-        binding.breadcrumbLayout.isVisible = false
+        currentFolderName = ""
         applyFilterAndDisplay()
+    }
+
+    private fun showOverflowMenu(anchor: View) {
+        val popup = PopupMenu(requireContext(), anchor)
+        if (currentFolderId != null || !isFolderView) {
+            popup.menu.add(0, 4, 0, if (isGridMode) "Switch to List View" else "Switch to Grid View")
+        }
+        popup.menu.add(0, 1, 1, "Network Stream")
+        popup.menu.add(0, 2, 2, "Open File")
+        popup.menu.add(0, 3, 3, "Settings")
+
+        popup.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                1 -> {
+                    val helper = Utils.OpenUrlDialog(requireContext())
+                    with(helper) {
+                        builder.setPositiveButton(R.string.dialog_ok) { _, _ -> playFile(helper.text) }
+                        builder.setNegativeButton(R.string.dialog_cancel) { dialog, _ -> dialog.cancel() }
+                        create().show()
+                    }
+                    true
+                }
+                2 -> {
+                    val i = Intent(context, FilePickerActivity::class.java)
+                    i.putExtra("skip", FilePickerActivity.FILE_PICKER)
+                    filePickerLauncher.launch(i)
+                    true
+                }
+                3 -> {
+                    startActivity(Intent(context, PreferenceActivity::class.java))
+                    true
+                }
+                4 -> {
+                    isGridMode = !isGridMode
+                    updateLayoutManager()
+                    applyFilterAndDisplay()
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     private fun checkPermissionAndLoad() {
@@ -237,7 +331,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             scanMediaLibrary()
         } else {
             binding.permissionCard.isVisible = true
-            binding.emptyLayout.isVisible = false
+            binding.emptyView.isVisible = false
         }
     }
 
@@ -251,6 +345,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun scanMediaLibrary() {
+        binding.loadingProgress.isVisible = true
         lifecycleScope.launch(Dispatchers.IO) {
             val videos = mutableListOf<MediaVideo>()
             val foldersMap = mutableMapOf<Long, MediaFolder>()
@@ -297,14 +392,32 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                         val bucketName = cursor.getString(bucketNameCol) ?: "Internal Storage"
 
                         val contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
-                        val video = MediaVideo(id, name, path, contentUri, duration, size, width, height, date, bucketId, bucketName)
+
+                        // Check resume progress and watched state
+                        val resumeKeyPath = "resume_path_${path.hashCode()}"
+                        val resumeKeyUri = "resume_path_${contentUri.toString().hashCode()}"
+                        val lastPos = sharedPrefs.getLong(resumeKeyPath, sharedPrefs.getLong(resumeKeyUri, 0L))
+                        val isWatched = sharedPrefs.getBoolean("watched_$id", lastPos > 5000L)
+                        val progress = if (duration > 0 && lastPos > 0) {
+                            ((lastPos * 100) / duration).toInt().coerceIn(0, 100)
+                        } else {
+                            0
+                        }
+
+                        val video = MediaVideo(
+                            id, name, path, contentUri, duration, size, width, height, date,
+                            bucketId, bucketName, progress, !isWatched
+                        )
                         videos.add(video)
 
                         val folder = foldersMap.getOrPut(bucketId) {
                             val folderPath = if (path.contains("/")) path.substringBeforeLast("/") else path
-                            MediaFolder(bucketId, bucketName, folderPath, 0)
+                            MediaFolder(bucketId, bucketName, folderPath, 0, false)
                         }
                         folder.videoCount++
+                        if (video.isNew) {
+                            folder.hasNew = true
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -313,6 +426,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
             withContext(Dispatchers.Main) {
                 if (_binding == null) return@withContext
+                binding.loadingProgress.isVisible = false
+
                 allVideos.clear()
                 allVideos.addAll(videos)
 
@@ -327,20 +442,23 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private fun applyFilterAndDisplay() {
         if (_binding == null) return
 
+        val query = searchQuery.lowercase(Locale.ROOT)
+
         if (allVideos.isEmpty() && !binding.permissionCard.isVisible) {
-            binding.emptyLayout.isVisible = true
+            binding.emptyView.isVisible = true
             binding.mediaRecyclerView.isVisible = false
+            updateTopBarUI()
             return
         }
 
-        binding.emptyLayout.isVisible = false
+        binding.emptyView.isVisible = false
         binding.mediaRecyclerView.isVisible = true
 
-        val query = searchQuery.lowercase(Locale.ROOT)
+        updateLayoutManager()
 
-        if (isFolderMode && currentFolderId == null) {
-            // Folder List Mode
-            binding.breadcrumbLayout.isVisible = false
+        if (isFolderView && currentFolderId == null) {
+            // Folders List View Mode
+            updateTopBarUI()
             val filteredFolders = if (query.isEmpty()) {
                 allFolders
             } else {
@@ -349,19 +467,18 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
             binding.mediaRecyclerView.adapter = FolderAdapter(filteredFolders) { folder ->
                 currentFolderId = folder.id
-                binding.breadcrumbLayout.isVisible = true
-                binding.currentFolderNameTxt.text = folder.name
-                binding.currentFolderCountTxt.text = "${folder.videoCount} videos"
+                currentFolderName = folder.name
                 applyFilterAndDisplay()
             }
         } else {
-            // Video List Mode (either inside a folder or All Videos)
+            // Videos View Mode (inside folder or all videos)
             val baseList = if (currentFolderId != null) {
                 allVideos.filter { it.bucketId == currentFolderId }
             } else {
-                binding.breadcrumbLayout.isVisible = false
                 allVideos
             }
+
+            updateTopBarUI(baseList.size)
 
             val filteredVideos = if (query.isEmpty()) {
                 baseList
@@ -369,17 +486,52 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 baseList.filter { it.title.lowercase(Locale.ROOT).contains(query) }
             }
 
-            binding.mediaRecyclerView.adapter = VideoAdapter(filteredVideos) { video ->
+            binding.mediaRecyclerView.adapter = VideoAdapter(filteredVideos, isGridMode) { video ->
+                markVideoWatched(video)
                 playFile(video.path.ifEmpty { video.uri.toString() })
             }
         }
     }
 
-    private fun playFile(filepath: String) {
+    private fun updateTopBarUI(itemCount: Int = 0) {
+        if (currentFolderId != null) {
+            // Inside Folder View
+            binding.navBackBtn.isVisible = true
+            binding.appTitleTxt.text = currentFolderName
+            binding.folderCountSubtitleTxt.isVisible = true
+            binding.folderCountSubtitleTxt.text = "($itemCount)"
+            binding.viewModeBtn.setImageResource(
+                if (isGridMode) R.drawable.ic_view_list_24dp else R.drawable.ic_view_module_24dp
+            )
+        } else if (!isFolderView) {
+            // All Videos View
+            binding.navBackBtn.isVisible = true
+            binding.appTitleTxt.text = "All Videos"
+            binding.folderCountSubtitleTxt.isVisible = true
+            binding.folderCountSubtitleTxt.text = "($itemCount)"
+            binding.viewModeBtn.setImageResource(R.drawable.ic_folder_24dp)
+        } else {
+            // Root Folders View
+            binding.navBackBtn.isVisible = false
+            binding.appTitleTxt.text = getString(R.string.mpv_activity)
+            binding.folderCountSubtitleTxt.isVisible = false
+            binding.viewModeBtn.setImageResource(R.drawable.ic_video_file_24dp)
+        }
+    }
+
+    private fun markVideoWatched(video: MediaVideo) {
+        video.isNew = false
+        sharedPrefs.edit().putBoolean("watched_${video.id}", true).apply()
+    }
+
+    private fun playFile(filepath: String, fromBeginning: Boolean = false) {
         val i: Intent = if (filepath.startsWith("content://")) {
             Intent(Intent.ACTION_VIEW, Uri.parse(filepath))
         } else {
             Intent().apply { putExtra("filepath", filepath) }
+        }
+        if (fromBeginning) {
+            i.putExtra("from_beginning", true)
         }
         i.setClass(requireContext(), MPVActivity::class.java)
         playerLauncher.launch(i)
@@ -390,9 +542,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     // =========================================================================
 
     private class FolderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val folderIcon: ImageView = view.findViewById(R.id.folderIcon)
         val folderNameTxt: TextView = view.findViewById(R.id.folderNameTxt)
-        val folderPathTxt: TextView = view.findViewById(R.id.folderPathTxt)
         val videoCountTxt: TextView = view.findViewById(R.id.videoCountTxt)
+        val newBadgeTxt: TextView = view.findViewById(R.id.newBadgeTxt)
     }
 
     private inner class FolderAdapter(
@@ -408,8 +561,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
             val item = folders[position]
             holder.folderNameTxt.text = item.name
-            holder.folderPathTxt.text = item.path
-            holder.videoCountTxt.text = "${item.videoCount} videos"
+            holder.videoCountTxt.text = "(${item.videoCount})"
+            holder.newBadgeTxt.isVisible = item.hasNew
             holder.itemView.setOnClickListener { onClick(item) }
         }
 
@@ -420,20 +573,23 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         val videoThumbnail: ImageView = view.findViewById(R.id.videoThumbnail)
         val videoPlaceholderIcon: ImageView = view.findViewById(R.id.videoPlaceholderIcon)
         val videoDurationTxt: TextView = view.findViewById(R.id.videoDurationTxt)
+        val videoNewBadge: TextView = view.findViewById(R.id.videoNewBadge)
         val videoProgressBar: ProgressBar = view.findViewById(R.id.videoProgressBar)
         val videoTitleTxt: TextView = view.findViewById(R.id.videoTitleTxt)
-        val videoResolutionBadge: TextView = view.findViewById(R.id.videoResolutionBadge)
+        val videoResolutionBadge: TextView? = view.findViewById(R.id.videoResolutionBadge)
         val videoDetailsTxt: TextView = view.findViewById(R.id.videoDetailsTxt)
         val videoMoreBtn: ImageButton = view.findViewById(R.id.videoMoreBtn)
     }
 
     private inner class VideoAdapter(
         private val videos: List<MediaVideo>,
+        private val isGrid: Boolean,
         private val onClick: (MediaVideo) -> Unit
     ) : RecyclerView.Adapter<VideoViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
-            val v = LayoutInflater.from(parent.context).inflate(R.layout.item_media_video, parent, false)
+            val layoutId = if (isGrid) R.layout.item_media_video_grid else R.layout.item_media_video
+            val v = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
             return VideoViewHolder(v)
         }
 
@@ -442,11 +598,20 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
             holder.videoTitleTxt.text = item.title
             holder.videoDurationTxt.text = Utils.prettyTime((item.durationMs / 1000).toInt())
+            holder.videoNewBadge.isVisible = item.isNew
 
+            // Resume progress bar
+            if (item.playbackProgress > 5 && item.playbackProgress < 95) {
+                holder.videoProgressBar.isVisible = true
+                holder.videoProgressBar.progress = item.playbackProgress
+            } else {
+                holder.videoProgressBar.isVisible = false
+            }
+
+            // Specs and Details
             val sizeStr = Formatter.formatFileSize(requireContext(), item.sizeBytes)
-            holder.videoDetailsTxt.text = sizeStr
+            val dateStr = SimpleDateFormat("dd MMM", Locale.getDefault()).format(Date(item.dateModified * 1000L))
 
-            // Resolution badge
             val resText = if (item.height >= 2160 || item.width >= 3840) {
                 "4K"
             } else if (item.height >= 1080 || item.width >= 1920) {
@@ -458,9 +623,15 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             } else {
                 "SD"
             }
-            holder.videoResolutionBadge.text = resText
 
-            // Thumbnail loading
+            if (holder.videoResolutionBadge != null) {
+                holder.videoResolutionBadge.text = resText
+                holder.videoDetailsTxt.text = "• $sizeStr • $dateStr"
+            } else {
+                holder.videoDetailsTxt.text = "$resText • $sizeStr"
+            }
+
+            // Thumbnail Loading via LruCache
             holder.videoThumbnail.tag = item.id
             val cachedBitmap = thumbnailCache.get(item.id)
             if (cachedBitmap != null) {
@@ -507,47 +678,65 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
             holder.itemView.setOnClickListener { onClick(item) }
 
-            holder.videoMoreBtn.setOnClickListener {
-                showVideoOptions(item)
+            holder.videoMoreBtn.setOnClickListener { v ->
+                showVideoItemMenu(v, item)
             }
         }
 
         override fun getItemCount() = videos.size
     }
 
-    private fun showVideoOptions(video: MediaVideo) {
-        val options = arrayOf("Play", "Share", "Details")
-        AlertDialog.Builder(requireContext())
-            .setTitle(video.title)
-            .setItems(options) { dialog, idx ->
-                when (idx) {
-                    0 -> playFile(video.path.ifEmpty { video.uri.toString() })
-                    1 -> {
-                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "video/*"
-                            putExtra(Intent.EXTRA_STREAM, video.uri)
-                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        }
-                        startActivity(Intent.createChooser(shareIntent, "Share Video"))
-                    }
-                    2 -> {
-                        val details = """
-                            Title: ${video.title}
-                            Duration: ${Utils.prettyTime((video.durationMs / 1000).toInt())}
-                            Resolution: ${video.width} x ${video.height}
-                            Size: ${Formatter.formatFileSize(requireContext(), video.sizeBytes)}
-                            Path: ${video.path}
-                        """.trimIndent()
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Video Details")
-                            .setMessage(details)
-                            .setPositiveButton(R.string.dialog_ok, null)
-                            .show()
-                    }
+    private fun showVideoItemMenu(anchor: View, video: MediaVideo) {
+        val popup = PopupMenu(requireContext(), anchor)
+        popup.menu.add(0, 1, 0, "Play")
+        popup.menu.add(0, 2, 1, "Play from beginning")
+        popup.menu.add(0, 3, 2, "Share")
+        popup.menu.add(0, 4, 3, "Properties")
+
+        popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+            when (menuItem.itemId) {
+                1 -> {
+                    markVideoWatched(video)
+                    playFile(video.path.ifEmpty { video.uri.toString() })
+                    true
                 }
-                dialog.dismiss()
+                2 -> {
+                    markVideoWatched(video)
+                    playFile(video.path.ifEmpty { video.uri.toString() }, fromBeginning = true)
+                    true
+                }
+                3 -> {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "video/*"
+                        putExtra(Intent.EXTRA_STREAM, video.uri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    startActivity(Intent.createChooser(shareIntent, "Share Video"))
+                    true
+                }
+                4 -> {
+                    val dateFormatted = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+                        .format(Date(video.dateModified * 1000L))
+                    val details = """
+                        File: ${video.title}
+                        Location: ${video.path}
+                        Size: ${Formatter.formatFileSize(requireContext(), video.sizeBytes)}
+                        Resolution: ${video.width} x ${video.height}
+                        Duration: ${Utils.prettyTime((video.durationMs / 1000).toInt())}
+                        Modified: $dateFormatted
+                    """.trimIndent()
+
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Properties")
+                        .setMessage(details)
+                        .setPositiveButton(R.string.dialog_ok, null)
+                        .show()
+                    true
+                }
+                else -> false
             }
-            .show()
+        }
+        popup.show()
     }
 
     companion object {

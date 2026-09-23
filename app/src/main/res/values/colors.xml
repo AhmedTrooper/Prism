@@ -16,14 +16,16 @@
 
     <color name="tint_seekbar_bg">#8A8A8A</color>
 
-    <!-- MX Player Colors -->
-    <color name="mx_blue">#2196F3</color>
-    <color name="mx_blue_light">#64B5F6</color>
-    <color name="mx_boost_orange">#FF9800</color>
+    <!-- MX Player Authentic Colors -->
+    <color name="mx_blue">#007AFF</color>
+    <color name="mx_blue_dark">#0066D6</color>
+    <color name="mx_blue_light">#409CFF</color>
+    <color name="mx_boost_orange">#FF6D00</color>
     <color name="mx_scrim_dark">#D9000000</color>
     <color name="mx_text_primary">#FFFFFFFF</color>
     <color name="mx_text_secondary">#B3FFFFFF</color>
     <color name="mx_card_bg">#B3000000</color>
+    <color name="mx_divider">#1FFFFFFF</color>
 
     <!-- 12% black in LIGHT THEME -->
     <color name="nnf_light_separator_color">#1e000000</color>

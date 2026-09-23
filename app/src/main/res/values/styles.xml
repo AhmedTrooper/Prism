@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="FilePickerTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="nnf_separator_color">@color/primary</item>
+        <item name="nnf_separator_color">@color/mx_blue</item>
 
-        <!-- Set these to match your theme -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <!-- MX Player Cobalt Blue Theme -->
+        <item name="colorPrimary">@color/mx_blue</item>
+        <item name="colorPrimaryDark">@color/mx_blue_dark</item>
+        <item name="colorAccent">@color/mx_blue</item>
+        <item name="android:statusBarColor">@color/mx_blue_dark</item>
 
         <!-- Need to set this also to style create folder dialog -->
         <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>

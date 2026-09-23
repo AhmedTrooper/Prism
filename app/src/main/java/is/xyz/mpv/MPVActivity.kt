@@ -307,7 +307,7 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
 
         // Parse the intent
         val filepath = parsePathFromIntent(intent)
-        if (intent.action == Intent.ACTION_VIEW) {
+        if (intent.extras != null) {
             parseIntentExtras(intent.extras)
         }
 
@@ -585,6 +585,17 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
     }
 
     private fun savePosition() {
+        val curPos = psc.positionSec
+        val curDur = psc.durationSec
+        val curPath = MPVLib.getPropertyString("path") ?: ""
+        if (curPath.isNotEmpty() && curPos > 0 && curDur > 0) {
+            val prefs = getDefaultSharedPreferences(this)
+            val editor = prefs.edit()
+            editor.putLong("resume_path_${curPath.hashCode()}", curPos.toLong() * 1000L)
+            editor.putLong("duration_path_${curPath.hashCode()}", curDur.toLong() * 1000L)
+            editor.apply()
+        }
+
         if (!shouldSavePosition)
             return
         if (MPVLib.getPropertyBoolean("eof-reached") ?: true) {
@@ -1175,9 +1186,13 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
                 onloadCommands.add(arrayOf("sub-add", subfile, flag))
             }
         }
-        extras.getInt("position", 0).let {
-            if (it > 0)
-                pushOption("start", "${it / 1000f}")
+        if (extras.getBoolean("from_beginning", false)) {
+            pushOption("start", "0")
+        } else {
+            extras.getInt("position", 0).let {
+                if (it > 0)
+                    pushOption("start", "${it / 1000f}")
+            }
         }
         extras.getString("title", "").let {
             if (!it.isNullOrEmpty())

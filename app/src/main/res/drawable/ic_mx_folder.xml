@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+  <!-- Folder body -->
+  <path
+      android:fillColor="#007AFF"
+      android:pathData="M20,8H8C5.79,8 4.02,9.79 4.02,12L4,36C4,38.21 5.79,40 8,40H40C42.21,40 44,38.21 44,36V16C44,13.79 42.21,12 40,12H24L20,8Z"/>
+  <!-- Folder flap accent -->
+  <path
+      android:fillColor="#3395FF"
+      android:pathData="M8,18H40C41.1,18 42,18.9 42,20V36C42,37.1 41.1,38 40,38H8C6.9,38 6,37.1 6,36V20C6,18.9 6.9,18 8,18Z"/>
+  <!-- Video play symbol inside folder -->
+  <path
+      android:fillColor="#FFFFFF"
+      android:pathData="M21,23L29,28L21,33Z"/>
+</vector>
