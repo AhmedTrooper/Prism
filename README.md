@@ -61,8 +61,9 @@ Thanks to Gradle ABI splits, users only download the native library built for th
   * Resume progress bar along the bottom of thumbnails for partially watched videos.
   * Resolution tags (`1080p`, `4K`, `720p`, `480p`) alongside file size and date.
   * Toggle between vertical list view and 2-column grid view.
-* **Instant Search**: Real-time filtering across folders and video files.
+* **Instant Search**: Real-time filtering across folders and video files with proper case-insensitive matching.
 * **Item Menu (3-dots)**: Play, Play from beginning, Share, and detailed file Properties (path, resolution, duration, size, date).
+* **Polished Layout (Sep 2026)**: Unified 4dp spacing grid, 0.5dp hairline dividers, card borders with stroke, 48dp touch targets, focus/hover/ripple states for TV and mouse, and clean text truncation (MX-style `NEW` badges, counts, and resolution tags).
 
 ### 2. Player Controls & Decoder Switcher
 * **Decoder Toggle**: Instant switching between `HW+` (Hardware Plus), `HW` (MediaCodec), and `SW` (Software FFmpeg) directly from the top bar.

@@ -11,3 +11,4 @@ build/
 local.properties
 ndk.properties
 *~
+.aider*

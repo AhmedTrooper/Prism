@@ -33,6 +33,7 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Back"
+                android:tooltipText="Back"
                 android:padding="10dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_arrow_back_24dp"
@@ -79,6 +80,7 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Search"
+                android:tooltipText="Search"
                 android:padding="9dp"
                 app:srcCompat="@drawable/ic_search_24dp"
                 app:tint="@android:color/white" />
@@ -91,6 +93,7 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Toggle View Mode"
+                android:tooltipText="Toggle view"
                 android:padding="9dp"
                 app:srcCompat="@drawable/ic_view_module_24dp"
                 app:tint="@android:color/white" />
@@ -104,6 +107,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Refresh"
                 android:padding="9dp"
+                android:tooltipText="Refresh"
                 app:srcCompat="@drawable/ic_refresh_24dp"
                 app:tint="@android:color/white" />
 
@@ -116,6 +120,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="More options"
                 android:padding="9dp"
+                android:tooltipText="More options"
                 app:srcCompat="@drawable/ic_more_vert_24dp"
                 app:tint="@android:color/white" />
         </LinearLayout>
@@ -139,6 +144,7 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Close search"
+                android:tooltipText="Close search"
                 android:padding="10dp"
                 app:srcCompat="@drawable/ic_arrow_back_24dp"
                 app:tint="@android:color/white" />
@@ -167,6 +173,7 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Clear"
+                android:tooltipText="Clear"
                 android:padding="@dimen/spacing_8"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_close_white_24dp"

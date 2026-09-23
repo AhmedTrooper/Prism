@@ -26,6 +26,13 @@
     <color name="mx_text_secondary">#B3FFFFFF</color>
     <color name="mx_card_bg">#B3000000</color>
     <color name="mx_divider">#1FFFFFFF</color>
+    <color name="mx_divider_subtle">#0FFFFFFF</color>
+    <color name="mx_surface">#121214</color>
+    <color name="mx_surface_variant">#1E1E24</color>
+    <color name="mx_outline">#3A3A44</color>
+    <color name="mx_outline_variant">#2A2A32</color>
+    <color name="mx_scrim">#99000000</color>
+    <color name="mx_ripple">#1F007AFF</color>
 
     <!-- 12% black in LIGHT THEME -->
     <color name="nnf_light_separator_color">#1e000000</color>

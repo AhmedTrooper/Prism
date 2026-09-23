@@ -591,8 +591,12 @@ class MPVActivity : AppCompatActivity(), MPVLib.EventObserver, TouchGesturesObse
         if (curPath.isNotEmpty() && curPos > 0 && curDur > 0) {
             val prefs = getDefaultSharedPreferences(this)
             val editor = prefs.edit()
+            val sizeBytes = File(curPath).let { if (it.exists()) it.length() else 0L }
+            val resumeKey = MediaResumeHelper.buildResumeKey(curPath, sizeBytes, System.currentTimeMillis() / 1000)
+            editor.putLong(resumeKey, curPos.toLong() * 1000L)
+            editor.putLong("duration_${resumeKey}", curDur.toLong() * 1000L)
+            // Keep legacy key for migration
             editor.putLong("resume_path_${curPath.hashCode()}", curPos.toLong() * 1000L)
-            editor.putLong("duration_path_${curPath.hashCode()}", curDur.toLong() * 1000L)
             editor.apply()
         }
 

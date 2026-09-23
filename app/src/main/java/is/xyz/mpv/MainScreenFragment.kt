@@ -92,7 +92,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private var isGridMode = false
     private var searchQuery = ""
 
-    private val thumbnailCache = LruCache<Long, Bitmap>(120)
+    private val thumbnailCache = LruCache<Long, Bitmap>(50)
     private lateinit var sharedPrefs: SharedPreferences
 
     private val backCallback = object : OnBackPressedCallback(true) {
@@ -171,6 +171,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun setupUI() {
+        // Fix ANR "No adapter attached" - set empty placeholder immediately
+        binding.mediaRecyclerView.adapter = object : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(p: ViewGroup, v: Int) = object : RecyclerView.ViewHolder(View(p.context)) {}
+            override fun onBindViewHolder(h: RecyclerView.ViewHolder, p: Int) {}
+            override fun getItemCount() = 0
+        }
         updateLayoutManager()
 
         // Navigation Back Button
@@ -246,11 +252,15 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             binding.mediaRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         } else {
             if (isGridMode) {
-                binding.mediaRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+                // 4dp grid: 8dp recycler padding + 8dp card padding needs ItemDecoration
+                val span = if (Utils.isXLargeTablet(requireContext())) 3 else 2
+                binding.mediaRecyclerView.layoutManager = GridLayoutManager(requireContext(), span)
             } else {
                 binding.mediaRecyclerView.layoutManager = LinearLayoutManager(requireContext())
             }
         }
+        // Ensure clipToPadding false already set via XML still holds after layout change
+        binding.mediaRecyclerView.clipToPadding = false
     }
 
     private fun openSearch() {
@@ -341,7 +351,16 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         } else {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
-        permissionLauncher.launch(permission)
+        if (shouldShowRequestPermissionRationale(permission)) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Storage Access Required")
+                .setMessage("Prism needs video access to show your media library. Please allow permission.")
+                .setPositiveButton(R.string.dialog_ok) { _, _ -> permissionLauncher.launch(permission) }
+                .setNegativeButton(R.string.dialog_cancel, null)
+                .show()
+        } else {
+            permissionLauncher.launch(permission)
+        }
     }
 
     private fun scanMediaLibrary() {
@@ -393,16 +412,18 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
                         val contentUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
 
-                        // Check resume progress and watched state
-                        val resumeKeyPath = "resume_path_${path.hashCode()}"
-                        val resumeKeyUri = "resume_path_${contentUri.toString().hashCode()}"
-                        val lastPos = sharedPrefs.getLong(resumeKeyPath, sharedPrefs.getLong(resumeKeyUri, 0L))
-                        val isWatched = sharedPrefs.getBoolean("watched_$id", lastPos > 5000L)
-                        val progress = if (duration > 0 && lastPos > 0) {
-                            ((lastPos * 100) / duration).toInt().coerceIn(0, 100)
-                        } else {
-                            0
-                        }
+                        // Robust resume key: path hash + size + date prevents collisions
+                        val resumeKeyV2 = MediaResumeHelper.buildResumeKey(path, size, date)
+                        val resumeKeyLegacyPath = "resume_path_${path.hashCode()}"
+                        val resumeKeyLegacyUri = "resume_path_${contentUri.toString().hashCode()}"
+                        val lastPos = sharedPrefs.getLong(
+                            resumeKeyV2,
+                            sharedPrefs.getLong(resumeKeyLegacyPath, sharedPrefs.getLong(resumeKeyLegacyUri, 0L))
+                        )
+                        val isWatched = MediaResumeHelper.isWatched(
+                            duration, lastPos, sharedPrefs.getBoolean("watched_$id", false)
+                        )
+                        val progress = MediaResumeHelper.progressPercent(lastPos, duration)
 
                         val video = MediaVideo(
                             id, name, path, contentUri, duration, size, width, height, date,
@@ -442,7 +463,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private fun applyFilterAndDisplay() {
         if (_binding == null) return
 
-        val query = searchQuery.lowercase(Locale.ROOT)
+        val query = searchQuery.trim().lowercase(Locale.ROOT)
 
         if (allVideos.isEmpty() && !binding.permissionCard.isVisible) {
             binding.emptyView.isVisible = true
@@ -462,7 +483,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             val filteredFolders = if (query.isEmpty()) {
                 allFolders
             } else {
-                allFolders.filter { it.name.lowercase(Locale.ROOT).contains(query) }
+                MediaBrowserHelper.filterFolders(allFolders, query)
             }
 
             binding.mediaRecyclerView.adapter = FolderAdapter(filteredFolders) { folder ->
@@ -480,11 +501,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
             updateTopBarUI(baseList.size)
 
-            val filteredVideos = if (query.isEmpty()) {
-                baseList
-            } else {
-                baseList.filter { it.title.lowercase(Locale.ROOT).contains(query) }
-            }
+            val filteredVideos = MediaBrowserHelper.filterVideos(baseList, query)
 
             binding.mediaRecyclerView.adapter = VideoAdapter(filteredVideos, isGridMode) { video ->
                 markVideoWatched(video)
@@ -612,17 +629,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             val sizeStr = Formatter.formatFileSize(requireContext(), item.sizeBytes)
             val dateStr = SimpleDateFormat("dd MMM", Locale.getDefault()).format(Date(item.dateModified * 1000L))
 
-            val resText = if (item.height >= 2160 || item.width >= 3840) {
-                "4K"
-            } else if (item.height >= 1080 || item.width >= 1920) {
-                "1080p"
-            } else if (item.height >= 720 || item.width >= 1280) {
-                "720p"
-            } else if (item.height >= 480 || item.width >= 854) {
-                "480p"
-            } else {
-                "SD"
-            }
+            val resText = MediaBrowserHelper.resolutionBadge(item.width, item.height)
 
             if (holder.videoResolutionBadge != null) {
                 holder.videoResolutionBadge.text = resText

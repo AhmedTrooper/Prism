@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- API 27+: add cutout support on top of base theme -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="colorPrimary">@color/mx_blue</item>
+        <item name="colorPrimaryDark">@color/mx_blue_dark</item>
+        <item name="colorAccent">@color/mx_blue</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+</resources>

@@ -136,6 +136,7 @@
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="More options"
+            android:tooltipText="More options"
             android:padding="4dp"
             app:srcCompat="@drawable/ic_more_vert_24dp"
             app:tint="?android:attr/textColorSecondary" />

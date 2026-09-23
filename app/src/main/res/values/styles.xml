@@ -25,14 +25,17 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
     </style>
 
-    <!-- theme for player UI -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
+    <!-- theme for player UI - base for API 23+ (cutout mode added in values-v27) -->
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowBackground">#000000</item>
+        <item name="colorPrimary">@color/mx_blue</item>
+        <item name="colorPrimaryDark">@color/mx_blue_dark</item>
+        <item name="colorAccent">@color/mx_blue</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <!-- theme for preferences -->
