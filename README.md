@@ -67,18 +67,23 @@ Prism provides two product flavors to support different distribution models and 
 ### 1. Clean Media Interface
 * **Branded Splash Screen**: Instant zero-delay window launch with signature geometric crystalline Prism emblem and bold typography, smoothly fading into the media library.
 * **Cobalt Blue Header**: Solid blue Action Bar (`#007AFF`) and dark blue status bar (`#0066D6`).
-* **Media Folder Browser**:
-  * Clean folder rows showing folder title and video count in parentheses, such as `Camera (27)`.
-  * Distinctive blue `NEW` badges for recently added items.
-  * 72dp indented hairline dividers for clean folder separation.
+* **Media Folder Browser (Authentic MX Style)**:
+  * Two-line folder hierarchy: bold folder title on top and item count below (`27 videos` / `1 video`).
+  * Custom directory folder glyphs: embossed camera glyph for `Camera`/`DCIM`, viewfinder glyph for `Screenshots`, and download arrow for `Download`.
+  * Corner red circular badge on folder icons indicating count of newly added videos.
+  * 72dp indented hairline dividers matching text alignment.
+  * Inside folder view cleanly displays the folder title alone without redundant counts in the top bar.
 * **Video List & Grid Views**:
   * 16:9 thumbnail previews with corner duration pills.
+  * Authentic red `NEW` pill badges (`#E53935`) on video thumbnails.
   * Resume progress bar along the bottom of thumbnails for partially watched videos.
   * Resolution tags (`1080p`, `4K`, `720p`, `480p`) alongside file size and date.
   * Toggle between vertical list view and 2-column grid view.
+  * Massive folder performance optimizations: background thread filtering, dynamic heap-proportional LruCache, automatic thumbnail job cancellation on view recycling, and viewholder pre-caching.
 * **Instant Search**: Real-time filtering across folders and video files with proper case-insensitive matching.
-* **Item Menu (3-dots)**: Play, Play from beginning, Share, and detailed file Properties (path, resolution, duration, size, date).
-* **Polished Layout (Sep 2026)**: Unified 4dp spacing grid, 0.5dp hairline dividers, card borders with stroke, 48dp touch targets, focus/hover/ripple states for TV and mouse, and clean text truncation (NEW badges, counts, and resolution tags).
+* **Branded Loading & Searching Indicator**: Features the animated crystalline Prism logo with smooth breathing luminescence during media library scans, folder transitions, and search queries, plus stylized Prism placeholders inside video cards while thumbnails load.
+* **Item Menu & Structured Properties**: Play, Play from beginning, Share, and structured Properties card (File details with exact byte counts and Media specs).
+* **Polished Layout (Sep 2026)**: Unified 4dp spacing grid, 0.5dp hairline dividers, card borders with stroke, 48dp touch targets, focus/hover/ripple states for TV and mouse, and clean text truncation.
 
 ### 2. Player Controls & Decoder Switcher
 * **Decoder Toggle**: Instant switching between `HW+` (Hardware Plus), `HW` (MediaCodec), and `SW` (Software FFmpeg) directly from the top bar.
@@ -145,4 +150,6 @@ To recompile `libmpv`, `ffmpeg`, and related libraries from source, follow the i
 ---
 
 ## License
-Prism is licensed under the terms of the GNU General Public License v3 or later. See [LICENSE](LICENSE) for details.
+* **Source Code & Original Assets**: Copyright (c) 2026 Ahmed Trooper. Licensed under the Apache License, Version 2.0 (with original upstream wrapper files under MIT).
+* **Compiled Application (APK)**: Distributed under the terms of the GNU General Public License v3.0 or later due to bundled `libmpv` and FFmpeg shared libraries.
+* See [LICENSE](LICENSE) and [docs/licenses.html](docs/licenses.html) for complete component attribution and license text.

@@ -42,7 +42,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmedtrooper.prism.databinding.FragmentMainScreenBinding
 import com.ahmedtrooper.prism.preferences.PreferenceActivity
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
+import android.view.animation.AccelerateDecelerateInterpolator
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -64,7 +70,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         val name: String,
         val path: String,
         var videoCount: Int = 0,
-        var hasNew: Boolean = false
+        var hasNew: Boolean = false,
+        var newCount: Int = 0
     )
 
     data class MediaVideo(
@@ -92,8 +99,17 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private var isGridMode = false
     private var searchQuery = ""
 
-    private val thumbnailCache = LruCache<Long, Bitmap>(50)
+    private val thumbnailCache: LruCache<Long, Bitmap> by lazy {
+        val maxMemory = (Runtime.getRuntime().maxMemory() / 1024).toInt()
+        val cacheSize = (maxMemory / 8).coerceIn(1024 * 16, 1024 * 64)
+        object : LruCache<Long, Bitmap>(cacheSize) {
+            override fun sizeOf(key: Long, bitmap: Bitmap): Int {
+                return (bitmap.byteCount / 1024).coerceAtLeast(1)
+            }
+        }
+    }
     private lateinit var sharedPrefs: SharedPreferences
+    private var pulseAnimator: AnimatorSet? = null
 
     private val backCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -166,8 +182,65 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     override fun onDestroyView() {
+        stopPulseAnimation()
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun startPulseAnimation() {
+        pulseAnimator?.cancel()
+        if (_binding == null) return
+
+        val scaleX = ObjectAnimator.ofFloat(binding.loadingLogo, View.SCALE_X, 1.0f, 1.12f, 1.0f).apply {
+            duration = 1200
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+        val scaleY = ObjectAnimator.ofFloat(binding.loadingLogo, View.SCALE_Y, 1.0f, 1.12f, 1.0f).apply {
+            duration = 1200
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+        val alpha = ObjectAnimator.ofFloat(binding.loadingLogo, View.ALPHA, 0.75f, 1.0f, 0.75f).apply {
+            duration = 1200
+            repeatCount = ValueAnimator.INFINITE
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+        pulseAnimator = AnimatorSet().apply {
+            playTogether(scaleX, scaleY, alpha)
+            start()
+        }
+    }
+
+    private fun stopPulseAnimation() {
+        pulseAnimator?.cancel()
+        pulseAnimator = null
+        if (_binding != null) {
+            binding.loadingLogo.scaleX = 1.0f
+            binding.loadingLogo.scaleY = 1.0f
+            binding.loadingLogo.alpha = 1.0f
+        }
+    }
+
+    private fun showLoading(message: String? = null) {
+        if (_binding == null) return
+        binding.mediaRecyclerView.isVisible = false
+        binding.emptyView.isVisible = false
+        binding.loadingLayout.isVisible = true
+        if (message != null) {
+            binding.loadingText.text = message
+            binding.loadingText.isVisible = true
+        } else {
+            binding.loadingText.isVisible = false
+        }
+        startPulseAnimation()
+    }
+
+    private fun hideLoading() {
+        if (_binding == null) return
+        stopPulseAnimation()
+        binding.loadingLayout.isVisible = false
+        binding.mediaRecyclerView.isVisible = true
     }
 
     private fun setupUI() {
@@ -177,6 +250,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             override fun onBindViewHolder(h: RecyclerView.ViewHolder, p: Int) {}
             override fun getItemCount() = 0
         }
+        binding.mediaRecyclerView.setHasFixedSize(true)
+        binding.mediaRecyclerView.setItemViewCacheSize(20)
         updateLayoutManager()
 
         // Navigation Back Button
@@ -364,7 +439,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun scanMediaLibrary() {
-        binding.loadingProgress.isVisible = true
+        showLoading(getString(R.string.loading_scanning))
         lifecycleScope.launch(Dispatchers.IO) {
             val videos = mutableListOf<MediaVideo>()
             val foldersMap = mutableMapOf<Long, MediaFolder>()
@@ -433,11 +508,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
                         val folder = foldersMap.getOrPut(bucketId) {
                             val folderPath = if (path.contains("/")) path.substringBeforeLast("/") else path
-                            MediaFolder(bucketId, bucketName, folderPath, 0, false)
+                            MediaFolder(bucketId, bucketName, folderPath, 0, false, 0)
                         }
                         folder.videoCount++
                         if (video.isNew) {
                             folder.hasNew = true
+                            folder.newCount++
                         }
                     }
                 }
@@ -447,7 +523,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
             withContext(Dispatchers.Main) {
                 if (_binding == null) return@withContext
-                binding.loadingProgress.isVisible = false
+                hideLoading()
 
                 allVideos.clear()
                 allVideos.addAll(videos)
@@ -460,6 +536,52 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         }
     }
 
+    private fun enterFolder(folder: MediaFolder) {
+        currentFolderId = folder.id
+        currentFolderName = folder.name
+        showLoading(getString(R.string.loading_folder))
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val startTime = System.currentTimeMillis()
+            val baseList = withContext(Dispatchers.Default) {
+                allVideos.filter { it.bucketId == folder.id }
+            }
+            if (_binding == null) return@launch
+
+            val query = searchQuery.trim().lowercase(Locale.ROOT)
+            val filteredVideos = if (query.isEmpty()) {
+                baseList
+            } else {
+                withContext(Dispatchers.Default) {
+                    MediaBrowserHelper.filterVideos(baseList, query)
+                }
+            }
+            if (_binding == null) return@launch
+
+            val elapsed = System.currentTimeMillis() - startTime
+            if (elapsed < 200) {
+                delay(200 - elapsed)
+            }
+            if (_binding == null) return@launch
+
+            hideLoading()
+            updateTopBarUI(baseList.size)
+
+            if (filteredVideos.isEmpty()) {
+                binding.emptyView.isVisible = true
+                binding.emptyMessageTxt.text = getString(R.string.empty_folder)
+                binding.mediaRecyclerView.isVisible = false
+            } else {
+                binding.emptyView.isVisible = false
+                binding.mediaRecyclerView.isVisible = true
+                binding.mediaRecyclerView.adapter = VideoAdapter(filteredVideos, isGridMode) { video ->
+                    markVideoWatched(video)
+                    playFile(video.path.ifEmpty { video.uri.toString() })
+                }
+            }
+        }
+    }
+
     private fun applyFilterAndDisplay() {
         if (_binding == null) return
 
@@ -467,13 +589,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         if (allVideos.isEmpty() && !binding.permissionCard.isVisible) {
             binding.emptyView.isVisible = true
+            binding.emptyMessageTxt.text = getString(R.string.empty_no_videos)
             binding.mediaRecyclerView.isVisible = false
             updateTopBarUI()
             return
         }
-
-        binding.emptyView.isVisible = false
-        binding.mediaRecyclerView.isVisible = true
 
         updateLayoutManager()
 
@@ -486,10 +606,16 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 MediaBrowserHelper.filterFolders(allFolders, query)
             }
 
-            binding.mediaRecyclerView.adapter = FolderAdapter(filteredFolders) { folder ->
-                currentFolderId = folder.id
-                currentFolderName = folder.name
-                applyFilterAndDisplay()
+            if (filteredFolders.isEmpty()) {
+                binding.emptyView.isVisible = true
+                binding.emptyMessageTxt.text = getString(R.string.empty_no_videos)
+                binding.mediaRecyclerView.isVisible = false
+            } else {
+                binding.emptyView.isVisible = false
+                binding.mediaRecyclerView.isVisible = true
+                binding.mediaRecyclerView.adapter = FolderAdapter(filteredFolders) { folder ->
+                    enterFolder(folder)
+                }
             }
         } else {
             // Videos View Mode (inside folder or all videos)
@@ -503,20 +629,32 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
             val filteredVideos = MediaBrowserHelper.filterVideos(baseList, query)
 
-            binding.mediaRecyclerView.adapter = VideoAdapter(filteredVideos, isGridMode) { video ->
-                markVideoWatched(video)
-                playFile(video.path.ifEmpty { video.uri.toString() })
+            if (filteredVideos.isEmpty()) {
+                binding.emptyView.isVisible = true
+                binding.emptyMessageTxt.text = if (currentFolderId != null) {
+                    getString(R.string.empty_folder)
+                } else {
+                    getString(R.string.empty_no_videos)
+                }
+                binding.mediaRecyclerView.isVisible = false
+            } else {
+                binding.emptyView.isVisible = false
+                binding.mediaRecyclerView.isVisible = true
+                binding.mediaRecyclerView.adapter = VideoAdapter(filteredVideos, isGridMode) { video ->
+                    markVideoWatched(video)
+                    playFile(video.path.ifEmpty { video.uri.toString() })
+                }
             }
         }
     }
 
     private fun updateTopBarUI(itemCount: Int = 0) {
         if (currentFolderId != null) {
-            // Inside Folder View
+            // Inside Folder View - MX Player does NOT show number of videos in top bar!
             binding.navBackBtn.isVisible = true
             binding.appTitleTxt.text = currentFolderName
-            binding.folderCountSubtitleTxt.isVisible = true
-            binding.folderCountSubtitleTxt.text = "($itemCount)"
+            binding.folderCountSubtitleTxt.isVisible = false
+            binding.folderCountSubtitleTxt.text = ""
             binding.viewModeBtn.setImageResource(
                 if (isGridMode) R.drawable.ic_view_list_24dp else R.drawable.ic_view_module_24dp
             )
@@ -524,15 +662,16 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             // All Videos View
             binding.navBackBtn.isVisible = true
             binding.appTitleTxt.text = "All Videos"
-            binding.folderCountSubtitleTxt.isVisible = true
-            binding.folderCountSubtitleTxt.text = "($itemCount)"
+            binding.folderCountSubtitleTxt.isVisible = false
+            binding.folderCountSubtitleTxt.text = ""
             binding.viewModeBtn.setImageResource(R.drawable.ic_folder_24dp)
         } else {
             // Root Folders View
             binding.navBackBtn.isVisible = false
-            binding.appTitleTxt.text = getString(R.string.app_name)
+            binding.appTitleTxt.text = "Folders"
             binding.folderCountSubtitleTxt.isVisible = false
-            binding.viewModeBtn.setImageResource(R.drawable.ic_video_file_24dp)
+            binding.folderCountSubtitleTxt.text = ""
+            binding.viewModeBtn.setImageResource(R.drawable.ic_folder_all_24dp)
         }
     }
 
@@ -578,8 +717,20 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
             val item = folders[position]
             holder.folderNameTxt.text = item.name
-            holder.videoCountTxt.text = "(${item.videoCount})"
+            holder.videoCountTxt.text = if (item.videoCount == 1) "1 video" else "${item.videoCount} videos"
             holder.newBadgeTxt.isVisible = item.hasNew
+            holder.newBadgeTxt.text = if (item.newCount > 0) item.newCount.toString() else "1"
+
+            // Choose authentic MX Player folder icon based on folder name
+            val lower = item.name.lowercase(Locale.ROOT)
+            val iconRes = when {
+                lower.contains("camera") || lower.contains("dcim") -> R.drawable.ic_mx_folder_camera
+                lower.contains("screenshot") -> R.drawable.ic_mx_folder_screenshots
+                lower.contains("download") -> R.drawable.ic_mx_folder_download
+                else -> R.drawable.ic_mx_folder_default
+            }
+            holder.folderIcon.setImageResource(iconRes)
+
             holder.itemView.setOnClickListener { onClick(item) }
         }
 
@@ -596,6 +747,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         val videoResolutionBadge: TextView? = view.findViewById(R.id.videoResolutionBadge)
         val videoDetailsTxt: TextView = view.findViewById(R.id.videoDetailsTxt)
         val videoMoreBtn: ImageButton = view.findViewById(R.id.videoMoreBtn)
+        var thumbnailJob: Job? = null
     }
 
     private inner class VideoAdapter(
@@ -610,8 +762,16 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             return VideoViewHolder(v)
         }
 
+        override fun onViewRecycled(holder: VideoViewHolder) {
+            super.onViewRecycled(holder)
+            holder.thumbnailJob?.cancel()
+            holder.thumbnailJob = null
+        }
+
         override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
             val item = videos[position]
+            holder.thumbnailJob?.cancel()
+            holder.thumbnailJob = null
 
             holder.videoTitleTxt.text = item.title
             holder.videoDurationTxt.text = Utils.prettyTime((item.durationMs / 1000).toInt())
@@ -638,7 +798,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 holder.videoDetailsTxt.text = "$resText • $sizeStr"
             }
 
-            // Thumbnail Loading via LruCache
+            // Thumbnail Loading via LruCache with job cancellation on recycle
             holder.videoThumbnail.tag = item.id
             val cachedBitmap = thumbnailCache.get(item.id)
             if (cachedBitmap != null) {
@@ -650,7 +810,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 holder.videoThumbnail.isVisible = false
                 holder.videoPlaceholderIcon.isVisible = true
 
-                lifecycleScope.launch(Dispatchers.IO) {
+                holder.thumbnailJob = lifecycleScope.launch(Dispatchers.IO) {
                     val bitmap: Bitmap? = try {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             val signal = CancellationSignal()
@@ -722,21 +882,29 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                     true
                 }
                 4 -> {
-                    val dateFormatted = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+                    val dateFormatted = SimpleDateFormat("MMMM dd, yyyy, h:mm a", Locale.getDefault())
                         .format(Date(video.dateModified * 1000L))
+                    val sizeFormatted = Formatter.formatFileSize(requireContext(), video.sizeBytes)
+                    val ext = if (video.path.contains(".")) video.path.substringAfterLast(".").uppercase(Locale.ROOT) else "Video"
+                    val resStr = if (video.width > 0 && video.height > 0) "${video.width} x ${video.height}" else "Unknown"
+
                     val details = """
+                        File
                         File: ${video.title}
                         Location: ${video.path}
-                        Size: ${Formatter.formatFileSize(requireContext(), video.sizeBytes)}
-                        Resolution: ${video.width} x ${video.height}
-                        Duration: ${Utils.prettyTime((video.durationMs / 1000).toInt())}
-                        Modified: $dateFormatted
+                        Size: $sizeFormatted (${String.format(Locale.getDefault(), "%,d", video.sizeBytes)} bytes)
+                        Date: $dateFormatted
+
+                        Media
+                        Format: $ext
+                        Resolution: $resStr
+                        Length: ${Utils.prettyTime((video.durationMs / 1000).toInt())}
                     """.trimIndent()
 
                     AlertDialog.Builder(requireContext())
-                        .setTitle("Properties")
+                        .setTitle(video.title)
                         .setMessage(details)
-                        .setPositiveButton(R.string.dialog_ok, null)
+                        .setPositiveButton("Okay", null)
                         .show()
                     true
                 }

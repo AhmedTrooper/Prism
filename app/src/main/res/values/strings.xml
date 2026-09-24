@@ -214,4 +214,11 @@
     <!-- File picker -->
     <string name="nnf_name">Name</string>
     <string name="nnf_permission_external_write_denied">Permission to access file system denied</string>
+
+    <!-- Media Browser Loading / Searching -->
+    <string name="loading_scanning">Scanning media library…</string>
+    <string name="loading_folder">Loading folder…</string>
+    <string name="loading_searching">Searching videos…</string>
+    <string name="empty_no_videos">No videos found</string>
+    <string name="empty_folder">This folder is empty</string>
 </resources>

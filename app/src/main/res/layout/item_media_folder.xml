@@ -17,65 +17,69 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
 
-        <!-- Folder Icon -->
-        <ImageView
-            android:id="@+id/folderIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:contentDescription="Folder"
-            android:src="@drawable/ic_mx_folder" />
+        <!-- Folder Icon with Corner Red Badge Container -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center_vertical">
 
-        <!-- Folder Name & Video Count (Single Line, Never Wraps) -->
+            <!-- Folder Icon Silhouette -->
+            <ImageView
+                android:id="@+id/folderIcon"
+                android:layout_width="44dp"
+                android:layout_height="40dp"
+                android:layout_gravity="bottom|start"
+                android:contentDescription="Folder"
+                android:src="@drawable/ic_mx_folder_default" />
+
+            <!-- Red Circular New Items Badge (Top-Right of Folder Icon) -->
+            <TextView
+                android:id="@+id/newBadgeTxt"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="top|end"
+                android:background="@drawable/badge_circle_red"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="1"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+        <!-- Folder Name (Line 1) & Video Count Subtitle (Line 2) -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/folderNameTxt"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:singleLine="true"
                 android:textColor="?android:attr/textColorPrimary"
-                android:textSize="@dimen/text_title"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Camera" />
 
             <TextView
                 android:id="@+id/videoCountTxt"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_8"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
                 android:maxLines="1"
-                android:singleLine="true"
                 android:textColor="?android:attr/textColorSecondary"
-                android:textSize="@dimen/text_body"
-                tools:text="(27)" />
-
-            <!-- NEW Badge -->
-            <TextView
-                android:id="@+id/newBadgeTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/badge_mx_new"
-                android:paddingStart="5dp"
-                android:paddingTop="1dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="1dp"
-                android:text="NEW"
-                android:textColor="@android:color/white"
-                android:textSize="9sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                android:textSize="13sp"
+                tools:text="27 videos" />
         </LinearLayout>
     </LinearLayout>
 

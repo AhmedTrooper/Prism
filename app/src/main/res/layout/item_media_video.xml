@@ -37,10 +37,9 @@
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
-                    android:alpha="0.35"
+                    android:alpha="0.4"
                     android:contentDescription="Video"
-                    app:srcCompat="@drawable/ic_video_file_24dp"
-                    app:tint="@android:color/white" />
+                    app:srcCompat="@drawable/ic_prism_splash_logo" />
 
                 <!-- Video Thumbnail -->
                 <ImageView

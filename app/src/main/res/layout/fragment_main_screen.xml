@@ -204,31 +204,58 @@
             tools:visibility="visible">
 
             <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:alpha="0.4"
+                android:id="@+id/emptyIcon"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:alpha="0.45"
                 android:contentDescription="Empty"
-                app:srcCompat="@drawable/ic_folder_24dp"
-                app:tint="?android:attr/textColorSecondary" />
+                app:srcCompat="@drawable/ic_prism_splash_logo" />
 
             <TextView
                 android:id="@+id/emptyMessageTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="No videos found"
+                android:text="@string/empty_no_videos"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="16sp" />
         </LinearLayout>
 
-        <!-- Loading Progress -->
-        <ProgressBar
-            android:id="@+id/loadingProgress"
+        <!-- Prism Branded Loading / Searching Indicator -->
+        <LinearLayout
+            android:id="@+id/loadingLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:indeterminateTint="@color/mx_blue"
-            android:visibility="gone" />
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <ImageView
+                android:id="@+id/loadingLogo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@string/app_name"
+                app:srcCompat="@drawable/ic_prism_splash_logo" />
+
+            <ProgressBar
+                android:id="@+id/loadingProgress"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="12dp"
+                android:indeterminateTint="@color/mx_blue" />
+
+            <TextView
+                android:id="@+id/loadingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="14sp"
+                tools:text="@string/loading_folder" />
+        </LinearLayout>
 
         <!-- Storage Permission Required Card -->
         <LinearLayout
