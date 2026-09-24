@@ -50,7 +50,7 @@
                     android:contentDescription="Thumbnail"
                     android:scaleType="centerCrop" />
 
-                <!-- Signature MX Player NEW Badge on Thumbnail -->
+                <!-- NEW Badge on Thumbnail -->
                 <TextView
                     android:id="@+id/videoNewBadge"
                     android:layout_width="wrap_content"

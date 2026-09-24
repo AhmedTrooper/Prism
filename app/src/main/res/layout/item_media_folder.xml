@@ -17,7 +17,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp">
 
-        <!-- Authentic MX Player Folder Icon -->
+        <!-- Folder Icon -->
         <ImageView
             android:id="@+id/folderIcon"
             android:layout_width="40dp"
@@ -59,7 +59,7 @@
                 android:textSize="@dimen/text_body"
                 tools:text="(27)" />
 
-            <!-- Signature MX Player NEW Badge -->
+            <!-- NEW Badge -->
             <TextView
                 android:id="@+id/newBadgeTxt"
                 android:layout_width="wrap_content"

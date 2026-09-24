@@ -4,7 +4,7 @@ High-performance Android video player powered by libmpv. Clean UI, universal aud
 
 ## Overview
 
-Prism is an ad-free, high-performance Android video player that brings together the playback power of [libmpv](https://github.com/mpv-player/mpv) and FFmpeg with the clean, familiar interface of MX Player.
+Prism is an ad-free, high-performance Android video player that brings together the playback power of [libmpv](https://github.com/mpv-player/mpv) and FFmpeg with a clean, streamlined mobile interface.
 
 Stock video players and popular commercial apps often fail to play common audio formats like AC3, E-AC3, and DTS due to licensing limits or require messy external codec packs. Commercial players are also packed with intrusive ads and tracking. Prism solves both problems: it plays all common audio and video formats directly with full hardware acceleration, zero ads, and no tracking.
 
@@ -50,12 +50,12 @@ Thanks to Gradle ABI splits, users only download the native library built for th
 
 ## Features
 
-### 1. Authentic MX Player Interface
-* **Cobalt Blue Header**: Classic MX solid blue Action Bar (`#007AFF`) and dark blue status bar (`#0066D6`).
+### 1. Clean Media Interface
+* **Cobalt Blue Header**: Solid blue Action Bar (`#007AFF`) and dark blue status bar (`#0066D6`).
 * **Media Folder Browser**:
   * Clean folder rows showing folder title and video count in parentheses, such as `Camera (27)`.
   * Distinctive blue `NEW` badges for recently added items.
-  * 72dp indented hairline dividers matching the authentic MX layout.
+  * 72dp indented hairline dividers for clean folder separation.
 * **Video List & Grid Views**:
   * 16:9 thumbnail previews with corner duration pills.
   * Resume progress bar along the bottom of thumbnails for partially watched videos.
@@ -63,7 +63,7 @@ Thanks to Gradle ABI splits, users only download the native library built for th
   * Toggle between vertical list view and 2-column grid view.
 * **Instant Search**: Real-time filtering across folders and video files with proper case-insensitive matching.
 * **Item Menu (3-dots)**: Play, Play from beginning, Share, and detailed file Properties (path, resolution, duration, size, date).
-* **Polished Layout (Sep 2026)**: Unified 4dp spacing grid, 0.5dp hairline dividers, card borders with stroke, 48dp touch targets, focus/hover/ripple states for TV and mouse, and clean text truncation (MX-style `NEW` badges, counts, and resolution tags).
+* **Polished Layout (Sep 2026)**: Unified 4dp spacing grid, 0.5dp hairline dividers, card borders with stroke, 48dp touch targets, focus/hover/ripple states for TV and mouse, and clean text truncation (NEW badges, counts, and resolution tags).
 
 ### 2. Player Controls & Decoder Switcher
 * **Decoder Toggle**: Instant switching between `HW+` (Hardware Plus), `HW` (MediaCodec), and `SW` (Software FFmpeg) directly from the top bar.

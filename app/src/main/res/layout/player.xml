@@ -19,7 +19,7 @@
         android:layout_height="match_parent">
 
         <!-- ================================================================= -->
-        <!-- MX PLAYER TOP BAR OVERLAY WITH GRADIENT SCRIM                    -->
+        <!-- TOP BAR OVERLAY WITH GRADIENT SCRIM                    -->
         <!-- ================================================================= -->
         <RelativeLayout
             android:id="@+id/top_controls"
@@ -430,7 +430,7 @@
             tools:text="[gesture]" />
 
         <!-- ================================================================= -->
-        <!-- MX PLAYER BOTTOM BAR & TRANSPORT CONTROLS WITH GRADIENT SCRIM     -->
+        <!-- BOTTOM BAR & TRANSPORT CONTROLS WITH GRADIENT SCRIM     -->
         <!-- ================================================================= -->
         <LinearLayout
             android:id="@+id/controls"
@@ -518,7 +518,7 @@
                     tools:text="45:30" />
             </LinearLayout>
 
-            <!-- MX Player Transport Buttons Row -->
+            <!-- Transport Buttons Row -->
             <LinearLayout
                 android:id="@+id/controls_button_group"
                 android:layout_width="match_parent"

@@ -273,7 +273,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:text="Allow Prism access to your videos to browse your media library in MX Player style."
+                android:text="Allow Prism access to your videos to browse and play your media library."
                 android:textColor="@color/mx_text_secondary"
                 android:textSize="14sp" />
 

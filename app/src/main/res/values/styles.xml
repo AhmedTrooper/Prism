@@ -3,7 +3,7 @@
     <style name="FilePickerTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="nnf_separator_color">@color/mx_blue</item>
 
-        <!-- MX Player Cobalt Blue Theme -->
+        <!-- Cobalt Blue Theme -->
         <item name="colorPrimary">@color/mx_blue</item>
         <item name="colorPrimaryDark">@color/mx_blue_dark</item>
         <item name="colorAccent">@color/mx_blue</item>

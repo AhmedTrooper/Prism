@@ -2206,7 +2206,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
                 binding.zoomCard.visibility = View.GONE
                 binding.volumeCard.visibility = View.VISIBLE
 
-                // Allow 200% volume boost when swiping beyond maximum system volume (MX Player signature)
+                // Allow 200% volume boost when swiping beyond maximum system volume
                 val targetStep = initialVolume + (diff * maxVolume * 1.5f).toInt()
                 if (targetStep > maxVolume) {
                     val boostFactor = ((targetStep - maxVolume).toFloat() / maxVolume * 100).toInt().coerceIn(0, 100)
