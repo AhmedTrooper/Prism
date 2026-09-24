@@ -12,23 +12,23 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop)
     jstring jvalue = NULL;
     switch (prop->format) {
     case MPV_FORMAT_NONE:
-        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_S, jprop);
+        env->CallStaticVoidMethod(prism_PrismLib, prism_PrismLib_eventProperty_S, jprop);
         break;
     case MPV_FORMAT_FLAG:
-        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sb, jprop,
+        env->CallStaticVoidMethod(prism_PrismLib, prism_PrismLib_eventProperty_Sb, jprop,
             (jboolean) (*(int*)prop->data != 0));
         break;
     case MPV_FORMAT_INT64:
-        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sl, jprop,
+        env->CallStaticVoidMethod(prism_PrismLib, prism_PrismLib_eventProperty_Sl, jprop,
             (jlong) *(int64_t*)prop->data);
         break;
     case MPV_FORMAT_DOUBLE:
-        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_Sd, jprop,
+        env->CallStaticVoidMethod(prism_PrismLib, prism_PrismLib_eventProperty_Sd, jprop,
             (jdouble) *(double*)prop->data);
         break;
     case MPV_FORMAT_STRING:
         jvalue = env->NewStringUTF(*(const char**)prop->data);
-        env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_eventProperty_SS, jprop, jvalue);
+        env->CallStaticVoidMethod(prism_PrismLib, prism_PrismLib_eventProperty_SS, jprop, jvalue);
         break;
     default:
         ALOGV("sendPropertyUpdateToJava: Unknown property update format received in callback: %d!", prop->format);
@@ -42,7 +42,7 @@ static void sendPropertyUpdateToJava(JNIEnv *env, mpv_event_property *prop)
 
 static void sendEventToJava(JNIEnv *env, int event)
 {
-    env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_event, event);
+    env->CallStaticVoidMethod(prism_PrismLib, prism_PrismLib_event, event);
 }
 
 static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg)
@@ -59,7 +59,7 @@ static void sendLogMessageToJava(JNIEnv *env, mpv_event_log_message *msg)
     jstring jprefix = env->NewStringUTF(msg->prefix);
     jstring jtext = env->NewStringUTF(msg->text);
 
-    env->CallStaticVoidMethod(mpv_MPVLib, mpv_MPVLib_logMessage_SiS,
+    env->CallStaticVoidMethod(prism_PrismLib, prism_PrismLib_logMessage_SiS,
         jprefix, (jint) msg->log_level, jtext);
 
     if (jprefix)

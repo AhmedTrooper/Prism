@@ -3,64 +3,40 @@ package com.ahmedtrooper.prism
 import android.content.Context
 import android.graphics.Bitmap
 import android.view.Surface
-import `is`.xyz.mpv.MPVLib
 
-// Wrapper for native library
+// Direct native bridge for Prism player engine
 
 @Suppress("unused")
 object PrismLib {
     init {
-        // Forward native callbacks from MPVLib JNI bridge to PrismLib observers
-        MPVLib.addObserver(object : MPVLib.EventObserver {
-            override fun eventProperty(property: String) {
-                PrismLib.eventProperty(property)
-            }
-            override fun eventProperty(property: String, value: Long) {
-                PrismLib.eventProperty(property, value)
-            }
-            override fun eventProperty(property: String, value: Boolean) {
-                PrismLib.eventProperty(property, value)
-            }
-            override fun eventProperty(property: String, value: String) {
-                PrismLib.eventProperty(property, value)
-            }
-            override fun eventProperty(property: String, value: Double) {
-                PrismLib.eventProperty(property, value)
-            }
-            override fun event(eventId: Int) {
-                PrismLib.event(eventId)
-            }
-        })
-
-        MPVLib.addLogObserver(object : MPVLib.LogObserver {
-            override fun logMessage(prefix: String, level: Int, text: String) {
-                PrismLib.logMessage(prefix, level, text)
-            }
-        })
+        val libs = arrayOf("mpv", "player")
+        for (lib in libs) {
+            System.loadLibrary(lib)
+        }
     }
 
-    fun create(appctx: Context) = MPVLib.create(appctx)
-    fun init() = MPVLib.init()
-    fun destroy() = MPVLib.destroy()
-    fun attachSurface(surface: Surface) = MPVLib.attachSurface(surface)
-    fun detachSurface() = MPVLib.detachSurface()
+    external fun create(appctx: Context)
+    external fun init()
+    external fun destroy()
+    external fun attachSurface(surface: Surface)
+    external fun detachSurface()
 
-    fun command(cmd: Array<out String>) = MPVLib.command(cmd)
+    external fun command(cmd: Array<out String>)
 
-    fun setOptionString(name: String, value: String): Int = MPVLib.setOptionString(name, value)
+    external fun setOptionString(name: String, value: String): Int
 
-    fun grabThumbnail(dimension: Int): Bitmap? = MPVLib.grabThumbnail(dimension)
+    external fun grabThumbnail(dimension: Int): Bitmap?
 
-    fun getPropertyInt(property: String): Int? = MPVLib.getPropertyInt(property)
-    fun setPropertyInt(property: String, value: Int) = MPVLib.setPropertyInt(property, value)
-    fun getPropertyDouble(property: String): Double? = MPVLib.getPropertyDouble(property)
-    fun setPropertyDouble(property: String, value: Double) = MPVLib.setPropertyDouble(property, value)
-    fun getPropertyBoolean(property: String): Boolean? = MPVLib.getPropertyBoolean(property)
-    fun setPropertyBoolean(property: String, value: Boolean) = MPVLib.setPropertyBoolean(property, value)
-    fun getPropertyString(property: String): String? = MPVLib.getPropertyString(property)
-    fun setPropertyString(property: String, value: String) = MPVLib.setPropertyString(property, value)
+    external fun getPropertyInt(property: String): Int?
+    external fun setPropertyInt(property: String, value: Int)
+    external fun getPropertyDouble(property: String): Double?
+    external fun setPropertyDouble(property: String, value: Double)
+    external fun getPropertyBoolean(property: String): Boolean?
+    external fun setPropertyBoolean(property: String, value: Boolean)
+    external fun getPropertyString(property: String): String?
+    external fun setPropertyString(property: String, value: String)
 
-    fun observeProperty(property: String, format: Int) = MPVLib.observeProperty(property, format)
+    external fun observeProperty(property: String, format: Int)
 
     private val observers = mutableListOf<EventObserver>()
 

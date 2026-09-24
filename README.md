@@ -34,7 +34,7 @@ To play videos reliably with universal format support, Prism packages the comple
 | `libswscale.so` | 1.2 MB | Video scaling and color conversion |
 | `libavutil.so` | 740 KB | Core media utility functions |
 | `libswresample.so` | 100 KB | Audio resampling and channel layout mapping |
-| `libplayer.so` | 21 KB | JNI bridge connecting Kotlin to mpv |
+| `libplayer.so` | 21 KB | Direct JNI bridge connecting `com.ahmedtrooper.prism.PrismLib` to the playback engine |
 
 ### APK Size by Architecture (Release)
 
@@ -45,6 +45,20 @@ Thanks to Gradle ABI splits, users only download the native library built for th
 * **x86_64**: ~39 MB *(64-bit emulators and Chromebooks)*
 * **x86**: ~35 MB *(32-bit emulators)*
 * **Universal APK**: ~130 MB *(includes all 4 architectures)*
+
+---
+
+## Storage Flavors & Distribution
+
+Prism provides two product flavors to support different distribution models and Android storage requirements:
+
+| Flavor | Minimum SDK | Storage Permission | Target Audience | Build Command |
+| :--- | :--- | :--- | :--- | :--- |
+| **`default`** | Android 6.0 (API 23) | Scoped Storage (`READ_MEDIA_VIDEO`) | Google Play Store | `./gradlew assembleDefaultRelease` |
+| **`allstorage`** | Android 11 (API 30) | `MANAGE_EXTERNAL_STORAGE` | Direct Download / F-Droid / Sideload | `./gradlew assembleAllstorageRelease` |
+
+* **`default`**: Follows modern Android scoped storage policies and is fully compliant with Google Play Store guidelines.
+* **`allstorage`**: Replaces the obsolete legacy storage bypass (`api29`) with Android 11+'s `MANAGE_EXTERNAL_STORAGE` permission, granting unrestricted access to SD cards, USB OTG, hidden dotfiles, and external subtitles without downgrading API level.
 
 ---
 
@@ -102,17 +116,27 @@ Thanks to Gradle ABI splits, users only download the native library built for th
 
 ### Build Debug APK
 ```bash
+# Standard Google Play build (Scoped Storage)
 ./gradlew assembleDefaultDebug
+
+# All Storage build (unrestricted filesystem access)
+./gradlew assembleAllstorageDebug
 ```
-Output APKs will be in `app/build/outputs/apk/default/debug/`:
+Output APKs will be in `app/build/outputs/apk/<flavor>/debug/`:
 * `app-default-arm64-v8a-debug.apk`
+* `app-allstorage-arm64-v8a-debug.apk`
 
 ### Build Release APK
 ```bash
+# Standard Google Play build
 ./gradlew assembleDefaultRelease
+
+# All Storage build
+./gradlew assembleAllstorageRelease
 ```
-Output APKs will be in `app/build/outputs/apk/default/release/`:
+Output APKs will be in `app/build/outputs/apk/<flavor>/release/`:
 * `app-default-arm64-v8a-release-unsigned.apk`
+* `app-allstorage-arm64-v8a-release-unsigned.apk`
 
 ### Compiling Native Dependencies
 To recompile `libmpv`, `ffmpeg`, and related libraries from source, follow the instructions in [`buildscripts/README.md`](buildscripts/README.md).
