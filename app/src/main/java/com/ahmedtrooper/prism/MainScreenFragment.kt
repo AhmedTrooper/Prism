@@ -87,7 +87,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         val bucketId: Long,
         val bucketName: String,
         var playbackProgress: Int = 0, // 0 - 100
-        var isNew: Boolean = true
+        var isNew: Boolean = true,
+        val formattedDuration: String = "",
+        val formattedDetailsList: String = "",
+        val formattedDetailsGrid: String = "",
+        val resolutionBadge: String = ""
     )
 
     private val allVideos = mutableListOf<MediaVideo>()
@@ -440,9 +444,11 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     private fun scanMediaLibrary() {
         showLoading(getString(R.string.loading_scanning))
+        val appContext = context?.applicationContext
         lifecycleScope.launch(Dispatchers.IO) {
             val videos = mutableListOf<MediaVideo>()
             val foldersMap = mutableMapOf<Long, MediaFolder>()
+            val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
 
             val projection = arrayOf(
                 MediaStore.Video.Media._ID,
@@ -500,9 +506,20 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                         )
                         val progress = MediaResumeHelper.progressPercent(lastPos, duration)
 
+                        val resBadge = MediaBrowserHelper.resolutionBadge(width, height)
+                        val formattedDur = Utils.prettyTime((duration / 1000).toInt())
+                        val sizeStr = if (appContext != null) Formatter.formatFileSize(appContext, size) else "${size / (1024 * 1024)} MB"
+                        val dateStr = dateFormat.format(Date(date * 1000L))
+                        val detailsList = "• $sizeStr • $dateStr"
+                        val detailsGrid = "$resBadge • $sizeStr"
+
                         val video = MediaVideo(
                             id, name, path, contentUri, duration, size, width, height, date,
-                            bucketId, bucketName, progress, !isWatched
+                            bucketId, bucketName, progress, !isWatched,
+                            formattedDuration = formattedDur,
+                            formattedDetailsList = detailsList,
+                            formattedDetailsGrid = detailsGrid,
+                            resolutionBadge = resBadge
                         )
                         videos.add(video)
 
@@ -539,47 +556,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private fun enterFolder(folder: MediaFolder) {
         currentFolderId = folder.id
         currentFolderName = folder.name
-        showLoading(getString(R.string.loading_folder))
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            val startTime = System.currentTimeMillis()
-            val baseList = withContext(Dispatchers.Default) {
-                allVideos.filter { it.bucketId == folder.id }
-            }
-            if (_binding == null) return@launch
-
-            val query = searchQuery.trim().lowercase(Locale.ROOT)
-            val filteredVideos = if (query.isEmpty()) {
-                baseList
-            } else {
-                withContext(Dispatchers.Default) {
-                    MediaBrowserHelper.filterVideos(baseList, query)
-                }
-            }
-            if (_binding == null) return@launch
-
-            val elapsed = System.currentTimeMillis() - startTime
-            if (elapsed < 200) {
-                delay(200 - elapsed)
-            }
-            if (_binding == null) return@launch
-
-            hideLoading()
-            updateTopBarUI(baseList.size)
-
-            if (filteredVideos.isEmpty()) {
-                binding.emptyView.isVisible = true
-                binding.emptyMessageTxt.text = getString(R.string.empty_folder)
-                binding.mediaRecyclerView.isVisible = false
-            } else {
-                binding.emptyView.isVisible = false
-                binding.mediaRecyclerView.isVisible = true
-                binding.mediaRecyclerView.adapter = VideoAdapter(filteredVideos, isGridMode) { video ->
-                    markVideoWatched(video)
-                    playFile(video.path.ifEmpty { video.uri.toString() })
-                }
-            }
-        }
+        applyFilterAndDisplay()
+        binding.mediaRecyclerView.scrollToPosition(0)
     }
 
     private fun applyFilterAndDisplay() {
@@ -774,7 +752,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             holder.thumbnailJob = null
 
             holder.videoTitleTxt.text = item.title
-            holder.videoDurationTxt.text = Utils.prettyTime((item.durationMs / 1000).toInt())
+            holder.videoDurationTxt.text = item.formattedDuration.ifEmpty {
+                Utils.prettyTime((item.durationMs / 1000).toInt())
+            }
             holder.videoNewBadge.isVisible = item.isNew
 
             // Resume progress bar
@@ -785,17 +765,21 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                 holder.videoProgressBar.isVisible = false
             }
 
-            // Specs and Details
-            val sizeStr = Formatter.formatFileSize(requireContext(), item.sizeBytes)
-            val dateStr = SimpleDateFormat("dd MMM", Locale.getDefault()).format(Date(item.dateModified * 1000L))
-
-            val resText = MediaBrowserHelper.resolutionBadge(item.width, item.height)
+            // Specs and Details (instant pre-formatted strings, zero allocations)
+            val resText = item.resolutionBadge.ifEmpty { MediaBrowserHelper.resolutionBadge(item.width, item.height) }
 
             if (holder.videoResolutionBadge != null) {
                 holder.videoResolutionBadge.text = resText
-                holder.videoDetailsTxt.text = "• $sizeStr • $dateStr"
+                holder.videoDetailsTxt.text = item.formattedDetailsList.ifEmpty {
+                    val sizeStr = Formatter.formatFileSize(holder.itemView.context, item.sizeBytes)
+                    val dateStr = SimpleDateFormat("dd MMM", Locale.getDefault()).format(Date(item.dateModified * 1000L))
+                    "• $sizeStr • $dateStr"
+                }
             } else {
-                holder.videoDetailsTxt.text = "$resText • $sizeStr"
+                holder.videoDetailsTxt.text = item.formattedDetailsGrid.ifEmpty {
+                    val sizeStr = Formatter.formatFileSize(holder.itemView.context, item.sizeBytes)
+                    "$resText • $sizeStr"
+                }
             }
 
             // Thumbnail Loading via LruCache with job cancellation on recycle
