@@ -74,6 +74,7 @@ Thanks to Gradle ABI splits, users only download the native library built for th
   * Subtitle sync offset adjustment (±0.1s increments).
   * High-quality stylized subtitle rendering via `libass`.
 * **Background & PiP**: Support for Picture-in-Picture windowing and background audio playback.
+* **A-B Loop Repeat**: Tap the A-B loop button to set point A, point B, and repeat sections continuously, or long-press to reset.
 * **Resume Playback**: Automatically stores and restores playback positions for every video.
 
 ### 3. Gesture Controls

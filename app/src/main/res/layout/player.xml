@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <!-- MPV Video Surface -->
-    <is.xyz.mpv.MPVView
+    <!-- Prism Video Surface -->
+    <com.ahmedtrooper.prism.PrismView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -529,6 +529,22 @@
                 android:orientation="horizontal"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp">
+
+                <!-- A-B Loop Button -->
+                <Button
+                    android:id="@+id/abLoopBtn"
+                    style="?buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:minWidth="40dp"
+                    android:minHeight="0dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:text="A-B"
+                    android:textColor="@color/mx_text_primary"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
                 <!-- Screen / Kid Touch Lock Button (Bottom Left) -->
                 <ImageButton

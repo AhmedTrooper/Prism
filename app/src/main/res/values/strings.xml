@@ -121,16 +121,16 @@
     <string name="pref_background_play_default" translatable="false">never</string>
 
     <string name="pref_save_position_title">Save position on quit</string>
-    <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again mpv will seek to the previous position.</string>
+    <string name="pref_save_position_summary">Remember current playback position on exit. When the same file is played again Prism will seek to the previous position.</string>
 
     <string name="pref_remember_brightness_title">Remember screen brightness</string>
     <string name="pref_remember_brightness_summary">Restore previously set screen brightness at player startup.</string>
 
     <string name="pref_new_intent_replace_title">Play new files immediately</string>
-    <string name="pref_new_intent_replace_summary">When opening new files while mpv is in background, replace the current playlist instead of adding at end.</string>
+    <string name="pref_new_intent_replace_summary">When opening new files while Prism is in background, replace the current playlist instead of adding at end.</string>
 
     <string name="pref_auto_rotation_title">Screen orientation</string>
-    <string name="pref_auto_rotation_summary">Decide which orientation mpv will play landscape or portrait videos in.</string>
+    <string name="pref_auto_rotation_summary">Decide which orientation Prism will play landscape or portrait videos in.</string>
     <string name="pref_auto_rotation_default" translatable="false">auto</string>
 
     <string name="pref_display_media_title_title">Display media title (videos)</string>
@@ -202,7 +202,7 @@
     <string name="pref_edit_mpv_conf_message">You can directly edit mpv\'s configuration here.</string>
 
     <string name="pref_edit_input_conf">Edit input.conf</string>
-    <string name="pref_edit_input_conf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: mpv-android has some hardcoded keys which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
+    <string name="pref_edit_input_conf_message">You can edit input.conf here, this is mainly useful for TV remotes and keyboards.\n\nImportant: Prism has some hardcoded keys which can\'t be redefined here, e.g. \'j\' to cycle subtitles.</string>
 
     <!-- Strings used in Settings dialog preferences -->
     <string name="scaler_filter">Filter function</string>

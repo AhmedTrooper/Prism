@@ -4,7 +4,7 @@ ext.abiCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86":3, "x86_64":4]
 ext.universalBase = 8000
 
 android {
-    namespace 'is.xyz.mpv'
+    namespace 'com.ahmedtrooper.prism'
     compileSdk = 36
 
     defaultConfig {
