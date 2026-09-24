@@ -65,6 +65,7 @@ Prism provides two product flavors to support different distribution models and 
 ## Features
 
 ### 1. Clean Media Interface
+* **Branded Splash Screen**: Instant zero-delay window launch with signature geometric crystalline Prism emblem and bold typography, smoothly fading into the media library.
 * **Cobalt Blue Header**: Solid blue Action Bar (`#007AFF`) and dark blue status bar (`#0066D6`).
 * **Media Folder Browser**:
   * Clean folder rows showing folder title and video count in parentheses, such as `Camera (27)`.

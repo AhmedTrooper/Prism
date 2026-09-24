@@ -1,0 +1,70 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <!-- Left Crystal Facet -->
+    <path
+        android:pathData="M48,16 L16,74 L48,54 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="16"
+                android:startY="74"
+                android:endX="48"
+                android:endY="16"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#0066D6" />
+                <item android:offset="0.5" android:color="#007AFF" />
+                <item android:offset="1.0" android:color="#00E5FF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Right Crystal Facet -->
+    <path
+        android:pathData="M48,16 L80,74 L48,54 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="48"
+                android:startY="16"
+                android:endX="80"
+                android:endY="74"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#00D2FF" />
+                <item android:offset="0.6" android:color="#0066D6" />
+                <item android:offset="1.0" android:color="#304FFE" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Base Bottom Facet -->
+    <path
+        android:pathData="M16,74 L80,74 L48,54 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="16"
+                android:startY="74"
+                android:endX="80"
+                android:endY="74"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#003D82" />
+                <item android:offset="0.5" android:color="#0052A3" />
+                <item android:offset="1.0" android:color="#1A237E" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Apex Optical Glow Accent -->
+    <path
+        android:pathData="M48,16 L48,54"
+        android:strokeWidth="1.5"
+        android:strokeColor="#80FFFFFF"
+        android:strokeLineCap="round" />
+
+    <!-- Play Emblem Triangle -->
+    <path
+        android:pathData="M44,44 L56,51.5 L44,59 Z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

@@ -214,7 +214,7 @@
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="userPortrait"
-            android:theme="@style/FilePickerTheme"
+            android:theme="@style/Theme.Prism.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
