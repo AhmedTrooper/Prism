@@ -65,7 +65,7 @@ include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := libplayer
+LOCAL_MODULE    := libprism
 LOCAL_CFLAGS    := -Werror
 LOCAL_CPPFLAGS  += -std=c++11
 LOCAL_SRC_FILES := \

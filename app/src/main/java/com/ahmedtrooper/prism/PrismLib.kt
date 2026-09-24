@@ -9,7 +9,7 @@ import android.view.Surface
 @Suppress("unused")
 object PrismLib {
     init {
-        val libs = arrayOf("mpv", "player")
+        val libs = arrayOf("mpv", "prism")
         for (lib in libs) {
             System.loadLibrary(lib)
         }

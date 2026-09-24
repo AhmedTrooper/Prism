@@ -34,7 +34,7 @@ To play videos reliably with universal format support, Prism packages the comple
 | `libswscale.so` | 1.2 MB | Video scaling and color conversion |
 | `libavutil.so` | 740 KB | Core media utility functions |
 | `libswresample.so` | 100 KB | Audio resampling and channel layout mapping |
-| `libplayer.so` | 21 KB | Direct JNI bridge connecting `com.ahmedtrooper.prism.PrismLib` to the playback engine |
+| `libprism.so` | 21 KB | Direct JNI bridge connecting `com.ahmedtrooper.prism.PrismLib` to the playback engine |
 
 ### APK Size by Architecture (Release)
 
