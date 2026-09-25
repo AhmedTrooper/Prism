@@ -62,7 +62,7 @@
 
         <Button
             android:id="@+id/fileBtn"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="@style/Widget.Prism.Button.Text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -70,7 +70,7 @@
 
         <Button
             android:id="@+id/urlBtn"
-            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            style="@style/Widget.Prism.Button.Text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

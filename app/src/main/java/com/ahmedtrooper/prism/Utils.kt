@@ -27,7 +27,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.core.os.BundleCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -450,14 +450,14 @@ internal object Utils {
     }
 
     class OpenUrlDialog(context: Context) {
-        val builder = AlertDialog.Builder(context)
+        val builder = MaterialAlertDialogBuilder(context)
         private val editText = EditText(builder.context)
-        private lateinit var dialog: AlertDialog
+        private lateinit var dialog: androidx.appcompat.app.AlertDialog
 
         init {
             editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_URI
             editText.addTextChangedListener {
-                val positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                val positiveButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
                 if (it.isNullOrEmpty()) {
                     editText.error = null
                     positiveButton.isEnabled = false
@@ -483,10 +483,10 @@ internal object Utils {
                     PROTOCOLS.contains(uri.scheme)
         }
 
-        fun create(): AlertDialog {
+        fun create(): androidx.appcompat.app.AlertDialog {
             dialog = builder.create()
             editText.post { // initial state
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+                dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).isEnabled = false
             }
             return dialog
         }

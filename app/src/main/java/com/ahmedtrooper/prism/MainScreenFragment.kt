@@ -30,7 +30,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -441,7 +441,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
         if (shouldShowRequestPermissionRationale(permission)) {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Storage Access Required")
                 .setMessage("Prism needs video access to show your media library. Please allow permission.")
                 .setPositiveButton(R.string.dialog_ok) { _, _ -> permissionLauncher.launch(permission) }
@@ -902,7 +902,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                         Length: ${Utils.prettyTime((video.durationMs / 1000).toInt())}
                     """.trimIndent()
 
-                    AlertDialog.Builder(requireContext())
+                    MaterialAlertDialogBuilder(requireContext())
                         .setTitle(video.title)
                         .setMessage(details)
                         .setPositiveButton("Okay", null)

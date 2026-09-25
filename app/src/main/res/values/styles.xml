@@ -1,74 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="FilePickerTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="nnf_separator_color">@color/mx_blue</item>
 
-        <!-- MX Player Clean Surface Theme -->
-        <item name="colorPrimary">@color/mx_blue</item>
-        <item name="colorPrimaryDark">@color/mx_window_bg</item>
-        <item name="colorAccent">@color/mx_blue</item>
-        <item name="android:colorBackground">@color/mx_window_bg</item>
-        <item name="android:statusBarColor">@color/mx_window_bg</item>
+    <!--
+        Prism Material 3 theme tree.
+
+        Theme.Prism                       base for all activities
+        Theme.Prism.Splash                cold-launch window
+        Theme.Prism.Library               MainActivity + FilePickerActivity
+        Theme.Prism.Player                PlayerActivity
+        Theme.Prism.Preferences           PreferenceActivity + AboutActivity
+    -->
+
+    <style name="Theme.Prism" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Brand -->
+        <item name="colorPrimary">@color/prism_primary</item>
+        <item name="colorOnPrimary">@color/prism_on_primary</item>
+        <item name="colorPrimaryContainer">@color/prism_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/prism_on_primary_container</item>
+
+        <!-- Secondary uses primary tones so the brand reads consistently -->
+        <item name="colorSecondary">@color/prism_primary</item>
+        <item name="colorOnSecondary">@color/prism_on_primary</item>
+
+        <!-- Surfaces -->
+        <item name="android:colorBackground">?attr/colorSurface</item>
+        <item name="colorSurface">@color/prism_surface</item>
+        <item name="colorOnSurface">@color/prism_on_surface</item>
+        <item name="colorSurfaceVariant">@color/prism_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/prism_on_surface_variant</item>
+        <item name="colorSurfaceContainer">@color/prism_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/prism_surface_container_high</item>
+        <item name="colorOutline">@color/prism_outline</item>
+        <item name="colorOutlineVariant">@color/prism_outline_variant</item>
+
+        <!-- Errors -->
+        <item name="colorError">@color/prism_error</item>
+        <item name="colorOnError">@color/prism_on_error</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="android:navigationBarColor">@color/mx_window_bg</item>
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
-        <!-- Need to set this also to style create folder dialog -->
-        <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>
-        <item name="android:textColorPrimary">@color/mx_text_primary_theme</item>
-        <item name="android:textColorSecondary">@color/mx_text_secondary_theme</item>
-        <item name="android:textColorLink">@color/mx_blue</item>
+        <!-- Text -->
+        <item name="android:textColorPrimary">@color/prism_on_surface</item>
+        <item name="android:textColorSecondary">@color/prism_on_surface_variant</item>
+        <item name="android:textColorLink">@color/prism_primary</item>
+
+        <!-- Component overlays — pick up the right look on every dialog/popup -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Prism.MaterialAlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Prism.AppCompatAlertDialog</item>
+        <item name="popupMenuStyle">@style/Widget.Prism.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.Prism.PopupMenu.Overflow</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Prism.BottomSheetDialog</item>
+        <item name="materialButtonStyle">@style/Widget.Prism.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Prism.Button.Outlined</item>
+        <item name="autoCompleteTextViewStyle">@style/Widget.Prism.AutoCompleteTextView</item>
+        <item name="textInputStyle">@style/Widget.Prism.TextInputLayout</item>
     </style>
 
-    <style name="FilePickerThemeSpecial" parent="FilePickerTheme">
-        <!-- used to draw behind navigation bar -->
-        <item name="android:windowTranslucentNavigation">true</item>
-    </style>
-
-    <!-- Theme for cold launch splash window -->
-    <style name="Theme.Prism.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Cold-launch splash window. Renders the Prism logo only. -->
+    <style name="Theme.Prism.Splash" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:windowBackground">@drawable/prism_splash_window_bg</item>
         <item name="android:statusBarColor">#0B1120</item>
         <item name="android:navigationBarColor">#0B1120</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
     </style>
 
-    <style name="FilePickerTheme.AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
+    <!-- Library (folders + streams + Me) screens. -->
+    <style name="Theme.Prism.Library" parent="Theme.Prism" />
+
+    <!-- File picker file list. Same surface as the library, but with
+         translucent navigation so we can draw behind it like before. -->
+    <style name="Theme.Prism.FilePicker" parent="Theme.Prism.Library">
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
-    <!-- theme for player UI - base for API 23+ (cutout mode added in values-v27) -->
-    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
+    <!-- Player. Transparent system bars over the video surface. -->
+    <style name="Theme.Prism.Player" parent="Theme.Prism">
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowBackground">#000000</item>
-        <item name="colorPrimary">@color/mx_blue</item>
-        <item name="colorPrimaryDark">@color/mx_blue_dark</item>
-        <item name="colorAccent">@color/mx_blue</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">#000000</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
     </style>
 
-    <!-- theme for preferences -->
-    <style name="AppTheme.Preference" parent="Theme.Material3.DayNight">
-        <item name="toolbarStyle">@style/AppTheme.Toolbar.Style</item>
-        <item name="alertDialogTheme">@style/AppTheme.Preference.AlertDialog</item>
-    </style>
-
-    <style name="AppTheme.Toolbar.Style" parent="Widget.Material3.Toolbar">
-        <item name="android:background">?colorSurface</item>
-    </style>
-
-    <style name="AppTheme.Preference.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="dialogCornerRadius">28dp</item>
-        <item name="cornerFamily">rounded</item>
+    <!-- Preferences. Adds an app bar toolbar. -->
+    <style name="Theme.Prism.Preferences" parent="Theme.Material3.DayNight">
+        <item name="colorPrimary">@color/prism_primary</item>
+        <item name="colorOnPrimary">@color/prism_on_primary</item>
+        <item name="colorSurface">@color/prism_surface</item>
+        <item name="colorOnSurface">@color/prism_on_surface</item>
         <item name="android:colorBackground">?attr/colorSurface</item>
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="toolbarStyle">@style/Widget.Prism.Toolbar</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Prism.MaterialAlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Prism.AppCompatAlertDialog</item>
     </style>
 
+    <!-- ============================================================== -->
+    <!--  Component overlays                                            -->
+    <!-- ============================================================== -->
 
-    <!-- Material3 Switches -->
+    <style name="ThemeOverlay.Prism.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorPrimary">@color/prism_primary</item>
+        <item name="colorOnPrimary">@color/prism_on_primary</item>
+        <item name="colorSurface">@color/prism_surface_container</item>
+        <item name="colorOnSurface">@color/prism_on_surface</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.Prism.Body</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Prism.Title</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Prism.Button.Text</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Prism.Button.Text</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Prism.Button.Text</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.Prism.Dialog</item>
+        <item name="dialogCornerRadius">@dimen/radius_dialog</item>
+    </style>
+
+    <style name="ThemeOverlay.Prism.AppCompatAlertDialog" parent="ThemeOverlay.AppCompat.Dialog.Alert">
+        <item name="colorPrimary">@color/prism_primary</item>
+        <item name="colorOnPrimary">@color/prism_on_primary</item>
+        <item name="colorAccent">@color/prism_primary</item>
+        <item name="android:colorBackground">@color/prism_surface_container</item>
+        <item name="android:textColorPrimary">@color/prism_on_surface</item>
+        <item name="android:textColor">@color/prism_on_surface</item>
+        <item name="android:windowBackground">@drawable/prism_dialog_background</item>
+    </style>
+
+    <style name="ThemeOverlay.Prism.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="colorSurfaceContainer">@color/prism_surface_container</item>
+        <item name="colorOnSurface">@color/prism_on_surface</item>
+        <item name="bottomSheetStyle">@style/Widget.Prism.BottomSheet</item>
+    </style>
+
+    <!-- ============================================================== -->
+    <!--  Widgets                                                       -->
+    <!-- ============================================================== -->
+
+    <style name="Widget.Prism.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">@dimen/spacing_24</item>
+    </style>
+
+    <style name="Widget.Prism.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/spacing_24</item>
+    </style>
+
+    <style name="Widget.Prism.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="cornerRadius">@dimen/spacing_24</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.Prism.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">?attr/colorSurface</item>
+    </style>
+
+    <style name="Widget.Prism.AutoCompleteTextView" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxStrokeColor">@color/prism_primary</item>
+        <item name="boxBackgroundColor">@color/prism_surface</item>
+        <item name="hintTextColor">@color/prism_on_surface_variant</item>
+        <item name="android:textColorHint">@color/prism_on_surface_variant</item>
+    </style>
+
+    <style name="Widget.Prism.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/prism_primary</item>
+        <item name="boxBackgroundColor">@color/prism_surface</item>
+        <item name="hintTextColor">@color/prism_on_surface_variant</item>
+        <item name="android:textColorHint">@color/prism_on_surface_variant</item>
+    </style>
+
+    <style name="Widget.Prism.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:textColorPrimary">@color/prism_on_surface</item>
+        <item name="android:textColorSecondary">@color/prism_on_surface_variant</item>
+        <item name="android:popupBackground">@drawable/prism_popup_background</item>
+    </style>
+
+    <style name="Widget.Prism.PopupMenu.Overflow" parent="Widget.Material3.PopupMenu.Overflow">
+        <item name="android:popupBackground">@drawable/prism_popup_background</item>
+    </style>
+
+    <style name="Widget.Prism.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/prism_surface_container</item>
+    </style>
+
+    <!-- ============================================================== -->
+    <!--  Shape                                                         -->
+    <!-- ============================================================== -->
+
+    <style name="ShapeAppearance.Prism.Dialog" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSize">@dimen/radius_dialog</item>
+    </style>
+
+    <!-- ============================================================== -->
+    <!--  Dialog text styles (used by overlays)                          -->
+    <!-- ============================================================== -->
+
+    <style name="MaterialAlertDialog.Prism.Title" parent="MaterialAlertDialog.Material3.Title.Text">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="MaterialAlertDialog.Prism.Body" parent="MaterialAlertDialog.Material3.Body.Text">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- ============================================================== -->
+    <!--  Legacy compatibility — used by 3rd-party / net file picker     -->
+    <!-- ============================================================== -->
+
+    <style name="FilePickerTheme" parent="Theme.Prism.FilePicker">
+        <item name="nnf_separator_color">@color/prism_primary</item>
+        <item name="colorPrimary">@color/prism_primary</item>
+        <item name="colorPrimaryDark">@color/prism_primary_dark</item>
+        <item name="colorAccent">@color/prism_primary</item>
+        <item name="android:textColorPrimary">@color/prism_on_surface</item>
+        <item name="android:textColorSecondary">@color/prism_on_surface_variant</item>
+        <item name="android:textColorLink">@color/prism_primary</item>
+    </style>
+
+    <style name="FilePickerThemeSpecial" parent="FilePickerTheme" />
+
+    <style name="FilePickerTheme.AlertDialog" parent="ThemeOverlay.Prism.AppCompatAlertDialog" />
+
+    <!-- Material3 Preference style for switch widget override. -->
     <style name="Preference.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material" tools:override="true">
         <item name="android:widgetLayout">@layout/material_preferences_switch</item>
     </style>

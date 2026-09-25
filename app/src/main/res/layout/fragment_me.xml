@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
+    android:background="?attr/colorSurface"
     android:orientation="vertical">
 
     <!-- Top Action Bar -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/appbar_height"
-        android:background="?android:attr/colorBackground"
+        android:background="?attr/colorSurface"
         android:elevation="@dimen/elevation_appbar">
 
         <LinearLayout

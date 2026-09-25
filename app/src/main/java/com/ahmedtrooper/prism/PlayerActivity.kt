@@ -18,6 +18,7 @@ import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.ForegroundServiceStartNotAllowedException
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.app.PictureInPictureParams
 import android.app.RemoteAction
 import android.content.BroadcastReceiver
@@ -1010,7 +1011,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         }
 
         val restore = pauseForDialog()
-        with (AlertDialog.Builder(this)) {
+        with (MaterialAlertDialogBuilder(this)) {
             setMessage(getString(R.string.exit_warning_playlist, notYetPlayed))
             setPositiveButton(R.string.dialog_yes) { dialog, _ ->
                 dialog.dismiss()
@@ -1252,7 +1253,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         val selectedIndex = tracks.indexOfFirst { it.mpvId == selectedMpvId }
         val restore = pauseForDialog()
 
-        with (AlertDialog.Builder(this)) {
+        with (MaterialAlertDialogBuilder(this)) {
             setSingleChoiceItems(tracks.map { it.name }.toTypedArray(), selectedIndex) { dialog, item ->
                 val trackId = tracks[item].mpvId
 
@@ -1280,7 +1281,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
             trackSwitchNotification { TrackData(it.mpvId, SubTrackDialog.TRACK_TYPE) }
         }
 
-        dialog = with (AlertDialog.Builder(this)) {
+        dialog = with (MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
@@ -1323,7 +1324,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
             }
         }
 
-        dialog = with (AlertDialog.Builder(this)) {
+        dialog = with (MaterialAlertDialogBuilder(this)) {
             val inflater = LayoutInflater.from(context)
             setView(impl.buildView(inflater))
             setOnDismissListener { restore() }
@@ -1343,7 +1344,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
             items.add(0, Pair("HW+ (mediacodec)", "mediacodec"))
         val hwdecActive = player.hwdecActive
         val selectedIndex = items.indexOfFirst { it.second == hwdecActive }
-        with (AlertDialog.Builder(this)) {
+        with (MaterialAlertDialogBuilder(this)) {
             setSingleChoiceItems(items.map { it.first }.toTypedArray(), selectedIndex ) { dialog, idx ->
                 PrismLib.setPropertyString("hwdec", items[idx].second)
                 dialog.dismiss()
@@ -1391,7 +1392,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
             restoreState: StateRestoreCallback) {
         lateinit var dialog: AlertDialog
 
-        val builder = AlertDialog.Builder(this)
+        val builder = MaterialAlertDialogBuilder(this)
         val dialogView = LayoutInflater.from(builder.context).inflate(layoutRes, null)
 
         for (button in buttons) {
@@ -1475,7 +1476,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
                             getString(R.string.ui_chapter_fallback, it.index+1, timecode)
                     }.toTypedArray()
                     val selectedIndex = PrismLib.getPropertyInt("chapter") ?: 0
-                    with (AlertDialog.Builder(this)) {
+                    with (MaterialAlertDialogBuilder(this)) {
                         setSingleChoiceItems(chapterArray, selectedIndex) { dialog, item ->
                             PrismLib.setPropertyInt("chapter", chapters[item].index)
                             dialog.dismiss()
@@ -1511,7 +1512,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         picker: PickerDialog, @StringRes titleRes: Int, property: String,
         restoreState: StateRestoreCallback
     ) {
-        val dialog = with(AlertDialog.Builder(this)) {
+        val dialog = with(MaterialAlertDialogBuilder(this)) {
             setTitle(titleRes)
             val inflater = LayoutInflater.from(context)
             setView(picker.buildView(inflater))
@@ -1547,7 +1548,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
                 },
                 MenuItem(R.id.aspectBtn) {
                     val ratios = resources.getStringArray(R.array.aspect_ratios)
-                    with (AlertDialog.Builder(this)) {
+                    with (MaterialAlertDialogBuilder(this)) {
                         setItems(R.array.aspect_ratio_names) { dialog, item ->
                             if (ratios[item] == "panscan") {
                                 PrismLib.setPropertyString("video-aspect-override", "-1")
@@ -1591,7 +1592,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         })
         buttons.add(MenuItem(R.id.subDelayBtn) {
             val picker = SubDelayDialog(-600.0, 600.0)
-            val dialog = with(AlertDialog.Builder(this)) {
+            val dialog = with(MaterialAlertDialogBuilder(this)) {
                 setTitle(R.string.sub_delay)
                 val inflater = LayoutInflater.from(context)
                 setView(picker.buildView(inflater))
@@ -1655,7 +1656,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
 
     private fun openAspectRatioPicker() {
         val ratios = resources.getStringArray(R.array.aspect_ratios)
-        with (AlertDialog.Builder(this)) {
+        with (MaterialAlertDialogBuilder(this)) {
             setItems(R.array.aspect_ratio_names) { dialog, item ->
                 if (ratios[item] == "panscan") {
                     PrismLib.setPropertyString("video-aspect-override", "-1")

@@ -1,7 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Modern MX Player Night Theme Colors -->
+    <!--
+        Prism color tokens for DARK mode.
+        Night-mode overrides only. Surface palette shifts to deeper
+        greys and on-surface ramps to white.
+    -->
+
     <color name="mx_window_bg">#121214</color>
     <color name="mx_text_primary_theme">#FFFFFF</color>
     <color name="mx_text_secondary_theme">#A0A0A0</color>
+
+    <color name="prism_primary">#409CFF</color>
+    <color name="prism_on_primary">#003063</color>
+    <color name="prism_primary_container">#0B3D7A</color>
+    <color name="prism_on_primary_container">#D8ECFF</color>
+
+    <color name="prism_surface">#121214</color>
+    <color name="prism_on_surface">#E5E5EC</color>
+    <color name="prism_surface_variant">#1E1E24</color>
+    <color name="prism_on_surface_variant">#C7C5D0</color>
+    <color name="prism_surface_container">#1A1A1E</color>
+    <color name="prism_surface_container_high">#24242A</color>
+
+    <color name="prism_outline">#8E8E99</color>
+    <color name="prism_outline_variant">#3A3A44</color>
+
+    <color name="prism_error">#FFB4AB</color>
+    <color name="prism_on_error">#690005</color>
+
+    <color name="prism_scrim">#B3000000</color>
+    <color name="prism_ripple">#1F409CFF</color>
+
+    <!-- Dark overrides for the legacy mx_* alias tokens that older layouts
+         and drawables still reference. -->
+    <color name="mx_surface">#121214</color>
+    <color name="mx_surface_variant">#1E1E24</color>
+    <color name="mx_outline">#8E8E99</color>
+    <color name="mx_outline_variant">#3A3A44</color>
+    <color name="mx_ripple">#1F409CFF</color>
 </resources>

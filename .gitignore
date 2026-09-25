@@ -13,3 +13,16 @@ ndk.properties
 *~
 .aider*
 /assets/
+# Local build artifacts and large binaries
+*.apk
+*.aab
+*.aar
+*.so
+*.dylib
+*.dll
+*.jar
+*.dex
+*.hprof
+# Adb pull targets (screenshots and screen recordings captured during development)
+captures/
+.cxx/

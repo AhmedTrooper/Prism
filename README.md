@@ -68,6 +68,14 @@ Prism provides two product flavors to support different distribution models and 
 * **MX-Style Bottom Navigation**: Bottom bar with three tabs — Local (folder browser), Streams (online video library), and Me (settings, app info, library rescan). Tabs keep their state across orientation changes and back-stack restoration.
 * **Branded Splash Screen**: Instant zero-delay window launch with signature geometric crystalline Prism emblem and bold typography, smoothly fading into the media library.
 * **Cobalt Blue Header**: Solid blue Action Bar (`#007AFF`) and dark blue status bar (`#0066D6`).
+
+### 1c. Global Material 3 Theme
+* **Single Source of Truth**: One `Theme.Prism` style extends `Theme.Material3.DayNight.NoActionBar` and is consumed by every activity — `MainActivity` (Library), `PlayerActivity` (Player), `FilePickerActivity` (File Picker), `PreferenceActivity` (Settings), `AboutActivity` (About) — through dedicated variants (`Theme.Prism.Library`, `Theme.Prism.Player`, `Theme.Prism.FilePicker`, `Theme.Prism.Preferences`).
+* **Brand Token Palette**: `prism_primary` (`#007AFF` light / `#409CFF` dark), `prism_surface`, `prism_surface_container`, `prism_on_surface`, `prism_on_surface_variant`, `prism_outline`, and matching `prism_*_container` family — every color resolves through the active DayNight palette with zero hard-coded hexes in layouts.
+* **Dialog & Popup Migration**: Every `AlertDialog.Builder` was replaced with `MaterialAlertDialogBuilder`, so all dialogs (single-choice option lists, message dialogs, the Open URL prompt, advanced/slider/decimal/playlist/track selectors) pick up the Material 3 surface, corner radius, and cobalt blue text button accent for free.
+* **Theme Overlays**: `materialAlertDialogTheme`, `alertDialogTheme`, `bottomSheetDialogTheme`, `popupMenuStyle`, `actionOverflowMenuStyle`, `materialButtonStyle`, `materialButtonOutlinedStyle`, `autoCompleteTextViewStyle`, and `textInputStyle` are all rebound to `Widget.Prism.*` styles so any future AppCompat or Material widget renders on-brand without per-call configuration.
+* **Custom Drawables**: `prism_dialog_background.xml` and `prism_popup_background.xml` provide rounded 28dp surfaces with proper tonal elevation for non-Material surfaces that still need to match.
+* **Runtime Selection**: Pick `System Default (Adaptive)`, `Light`, or `Dark` from the **App Theme** row in the Me tab. The choice is persisted via `AppCompatDelegate.setDefaultNightMode` and survives process death.
 * **Media Folder Browser (Authentic MX Style)**:
   * Two-line folder hierarchy: bold folder title on top and item count below (`27 videos` / `1 video`).
   * Custom directory folder glyphs: embossed camera glyph for `Camera`/`DCIM`, viewfinder glyph for `Screenshots`, and download arrow for `Download`.

@@ -1,46 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="primary" type="color">#722b72</item>
-    <item name="primary_dark" type="color">@color/primary</item>
-    <item name="accent" type="color">@color/primary</item>
 
-    <color name="tint_normal">#ffffff</color>
-    <color name="tint_disabled">#3c3c3c</color>
+    <!--
+        Prism color tokens.
+        Modern Material 3 palette. The mx_* color names are kept as
+        aliases for the embedded drawable XML references and the player
+        HUD code; new code should use the prism_* tokens directly.
+    -->
 
-    <color name="alpha_disabled">#85000000</color>
-    <color name="alpha24pct">#3c000000</color>
-    <color name="alpha12pct">#1e000000</color>
-
-    <color name="tint_btn_bg_nofocus">#00000000</color>
-    <color name="tint_btn_bg_focused">#807F7FB2</color>
-
-    <color name="tint_seekbar_bg">#8A8A8A</color>
-
-    <!-- Prism Colors -->
+    <!-- Brand palette -->
     <color name="mx_blue">#007AFF</color>
     <color name="mx_blue_dark">#0066D6</color>
     <color name="mx_blue_light">#409CFF</color>
     <color name="mx_boost_orange">#FF6D00</color>
+    <color name="prism_primary_dark">#0066D6</color>
+
+    <!-- Legacy accent (kept so FilePickerActivity resources still resolve) -->
+    <color name="primary">#722b72</color>
+    <color name="primary_dark">#722b72</color>
+    <color name="accent">#722b72</color>
+
+    <!-- 12% black in LIGHT, 12% white in DARK (night override at the bottom) -->
+    <color name="nnf_light_separator_color">#1e000000</color>
+    <color name="nnf_dark_separator_color">#1effffff</color>
+
+    <!--
+        Tint / alpha utilities used by the player.
+    -->
+    <color name="tint_normal">#ffffff</color>
+    <color name="tint_disabled">#3c3c3c</color>
+    <color name="alpha_disabled">#85000000</color>
+    <color name="alpha24pct">#3c000000</color>
+    <color name="alpha12pct">#1e000000</color>
+    <color name="tint_btn_bg_nofocus">#00000000</color>
+    <color name="tint_btn_bg_focused">#807F7FB2</color>
+    <color name="tint_seekbar_bg">#8A8A8A</color>
+
+    <!--
+        Prism Material 3 tokens (LIGHT).
+        Dark equivalents are in values-night/colors.xml.
+    -->
+    <color name="prism_primary">#007AFF</color>
+    <color name="prism_on_primary">#FFFFFF</color>
+    <color name="prism_primary_container">#D8ECFF</color>
+    <color name="prism_on_primary_container">#001A3D</color>
+
+    <color name="prism_surface">#FFFFFF</color>
+    <color name="prism_on_surface">#1C1B1F</color>
+    <color name="prism_surface_variant">#E5E5EC</color>
+    <color name="prism_on_surface_variant">#46464F</color>
+    <color name="prism_surface_container">#F2F2F6</color>
+    <color name="prism_surface_container_high">#ECECEF</color>
+
+    <color name="prism_outline">#767680</color>
+    <color name="prism_outline_variant">#C7C5D0</color>
+
+    <color name="prism_error">#BA1A1A</color>
+    <color name="prism_on_error">#FFFFFF</color>
+
+    <color name="prism_scrim">#99000000</color>
+    <color name="prism_ripple">#1F007AFF</color>
+
+    <!-- Player / dialog chrome (player-specific) -->
     <color name="mx_scrim_dark">#D9000000</color>
     <color name="mx_text_primary">#FFFFFFFF</color>
     <color name="mx_text_secondary">#B3FFFFFF</color>
     <color name="mx_card_bg">#B3000000</color>
     <color name="mx_divider">#1FFFFFFF</color>
     <color name="mx_divider_subtle">#0FFFFFFF</color>
-    <color name="mx_surface">#121214</color>
-    <color name="mx_surface_variant">#1E1E24</color>
-    <color name="mx_outline">#3A3A44</color>
-    <color name="mx_outline_variant">#2A2A32</color>
-    <color name="mx_scrim">#99000000</color>
-    <color name="mx_ripple">#1F007AFF</color>
-
-    <!-- 12% black in LIGHT THEME -->
-    <color name="nnf_light_separator_color">#1e000000</color>
-    <!-- 12% white in BLACK THEME -->
-    <color name="nnf_dark_separator_color">#1effffff</color>
-
-    <!-- Modern MX Player Light Theme Colors -->
     <color name="mx_window_bg">#FFFFFF</color>
     <color name="mx_text_primary_theme">#1C1B1F</color>
     <color name="mx_text_secondary_theme">#757575</color>
+
+    <!-- Aliases for the old mx_* surface tokens so existing layouts and
+         drawables keep working. New code should reference prism_*. -->
+    <color name="mx_surface">#FFFFFF</color>
+    <color name="mx_surface_variant">#E5E5EC</color>
+    <color name="mx_outline">#767680</color>
+    <color name="mx_outline_variant">#C7C5D0</color>
+    <color name="mx_ripple">#1F007AFF</color>
 </resources>

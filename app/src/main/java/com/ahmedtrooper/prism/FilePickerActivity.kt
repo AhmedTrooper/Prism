@@ -11,11 +11,11 @@ import android.os.Environment
 import androidx.preference.PreferenceManager
 import android.util.Log
 import android.view.*
-import android.widget.PopupMenu
+import androidx.appcompat.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Predicate
 import androidx.core.view.WindowCompat
@@ -141,7 +141,7 @@ class FilePickerActivity : AppCompatActivity(), AbstractFilePickerFragment.OnFil
 
                 val vols = Utils.getStorageVolumes(this)
 
-                with (AlertDialog.Builder(this)) {
+                with (MaterialAlertDialogBuilder(this)) {
                     setItems(vols.map { it.description }.toTypedArray()) { dialog, item ->
                         val vol = vols[item]
                         with (fragment!!) {

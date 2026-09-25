@@ -18,7 +18,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -184,7 +184,7 @@ class OnlineStreamsFragment : Fragment(R.layout.fragment_online_streams) {
 
     private fun showAddChoiceDialog() {
         val options = arrayOf("📁 Create New Folder / Category", "🎬 Add Stream URL (HLS / m3u8 / MP4)")
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(if (currentCategoryId == null) "Add to Streams" else "Add to $currentCategoryName")
             .setItems(options) { _, which ->
                 when (which) {
@@ -203,7 +203,7 @@ class OnlineStreamsFragment : Fragment(R.layout.fragment_online_streams) {
             setPadding(48, 32, 48, 32)
         }
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(if (currentCategoryId == null) "New Category" else "New Subcategory")
             .setView(input)
             .setPositiveButton("Create") { _, _ ->
@@ -236,7 +236,7 @@ class OnlineStreamsFragment : Fragment(R.layout.fragment_online_streams) {
         layout.addView(titleInput)
         layout.addView(urlInput)
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Add Online Stream")
             .setView(layout)
             .setPositiveButton("Add") { _, _ ->
@@ -268,7 +268,7 @@ class OnlineStreamsFragment : Fragment(R.layout.fragment_online_streams) {
                     true
                 }
                 2 -> {
-                    AlertDialog.Builder(requireContext())
+                    MaterialAlertDialogBuilder(requireContext())
                         .setTitle("Delete ${category.name}?")
                         .setMessage("This will delete this category, all its subcategories, and streams.")
                         .setPositiveButton("Delete") { _, _ ->
@@ -293,7 +293,7 @@ class OnlineStreamsFragment : Fragment(R.layout.fragment_online_streams) {
             setPadding(48, 32, 48, 32)
         }
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Rename Category")
             .setView(input)
             .setPositiveButton("Save") { _, _ ->
@@ -360,7 +360,7 @@ class OnlineStreamsFragment : Fragment(R.layout.fragment_online_streams) {
         layout.addView(titleInput)
         layout.addView(urlInput)
 
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Edit Stream")
             .setView(layout)
             .setPositiveButton("Save") { _, _ ->

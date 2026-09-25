@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
@@ -73,7 +73,7 @@ class MeFragment : Fragment(R.layout.fragment_me) {
                 else -> 0
             }
 
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Select App Theme")
                 .setSingleChoiceItems(themes, selected) { dialog, which ->
                     val mode = when (which) {
@@ -97,7 +97,7 @@ class MeFragment : Fragment(R.layout.fragment_me) {
 
         // Legal & Licenses
         binding.rowLegal.setOnClickListener {
-            AlertDialog.Builder(requireContext())
+            MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Legal & Licenses")
                 .setMessage(
                     "Prism Android Video Player\n\n" +

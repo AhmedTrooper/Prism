@@ -43,7 +43,7 @@
             android:launchMode="singleTask"
             android:alwaysRetainTaskState="true"
             android:autoRemoveFromRecents="true"
-            android:theme="@style/AppTheme"
+            android:theme="@style/Theme.Prism.Player"
             android:exported="true">
             <intent-filter> <!-- Media protocols -->
                 <action android:name="android.intent.action.VIEW" />
@@ -228,19 +228,19 @@
             android:name=".FilePickerActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="behind"
-            android:theme="@style/FilePickerThemeSpecial"
+            android:theme="@style/Theme.Prism.FilePicker"
             android:exported="false" />
 
         <activity
             android:name=".preferences.PreferenceActivity"
-            android:theme="@style/AppTheme.Preference"
+            android:theme="@style/Theme.Prism.Preferences"
             android:parentActivityName=".MainActivity"
             android:launchMode="singleTop"
             android:label="@string/title_activity_settings" />
 
         <activity
             android:name=".preferences.AboutActivity"
-            android:theme="@style/AppTheme.Preference"
+            android:theme="@style/Theme.Prism.Preferences"
             android:parentActivityName=".preferences.PreferenceActivity"
             android:launchMode="singleTop"
             android:label="@string/pref_header_about_mpv" />

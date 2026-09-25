@@ -28,8 +28,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private var splashLogo: View? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Switch from window splash theme to the app's action theme
-        setTheme(R.style.FilePickerTheme)
+        // Switch from window splash theme to the app's Material 3 library theme
+        // so dialogs, popups, and chips all pick up the global styling.
+        setTheme(R.style.Theme_Prism_Library)
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setTitle(R.string.app_name)
