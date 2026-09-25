@@ -192,6 +192,7 @@ Reports land in `app/build/reports/tests/testDefaultDebugUnitTest/index.html`. T
 ---
 
 ## License
-* **Source Code & Original Assets**: Copyright (c) 2026 Ahmed Trooper. Licensed under the Apache License, Version 2.0 (with original upstream wrapper files under MIT).
+* **Source Code & Original Assets**: Copyright (c) 2026 Md. Ramjan Miah (https://github.com/removet-v). Licensed under the Apache License, Version 2.0.
+* **Original upstream wrapper files**: Copyright (c) 2016 Ilya Zhuravlev and sfan5 <sfan5@live.de>. Licensed under the MIT License (preserved from the original mpv-android project).
 * **Compiled Application (APK)**: Distributed under the terms of the GNU General Public License v3.0 or later due to bundled `libmpv` and FFmpeg shared libraries.
 * See [LICENSE](LICENSE) and [docs/licenses.html](docs/licenses.html) for complete component attribution and license text.
