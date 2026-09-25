@@ -192,7 +192,7 @@ Reports land in `app/build/reports/tests/testDefaultDebugUnitTest/index.html`. T
 ---
 
 ## License
-* **Source Code & Original Assets**: Copyright (c) 2026 Md. Ramjan Miah (https://github.com/removet-v). Licensed under the Apache License, Version 2.0.
-* **Original upstream wrapper files**: Copyright (c) 2016 Ilya Zhuravlev and sfan5 <sfan5@live.de>. Licensed under the MIT License (preserved from the original mpv-android project).
-* **Compiled Application (APK)**: Distributed under the terms of the GNU General Public License v3.0 or later due to bundled `libmpv` and FFmpeg shared libraries.
-* See [LICENSE](LICENSE) and [docs/licenses.html](docs/licenses.html) for complete component attribution and license text.
+* **Original wrapper code** (mpv-android by Ilya Zhuravlev and sfan5): [LICENSE](LICENSE) — MIT License, preserved verbatim with all original authors.
+* **Prism original code** (Md. Ramjan Miah, https://github.com/removet-v): [LICENSE-APACHE](LICENSE-APACHE) — Apache License, Version 2.0.
+* **Compiled Application (APK)**: Distributed under the terms of the GNU General Public License v3.0 or later because the built APK bundles GPLv3-licensed `libmpv` and FFmpeg shared libraries. The source code itself stays under MIT / Apache 2.0; only the compiled binary that links against libmpv and FFmpeg falls under GPLv3.
+* See [LICENSE](LICENSE), [LICENSE-APACHE](LICENSE-APACHE), and [docs/licenses.html](docs/licenses.html) for complete component attribution and license text.
