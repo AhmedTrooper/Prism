@@ -7,11 +7,6 @@
         app:summary="@string/pref_header_general_summary"
         app:title="@string/pref_header_general" />
     <Preference
-        app:fragment="com.ahmedtrooper.prism.preferences.PreferenceActivity$VideoPreference"
-        app:icon="@drawable/round_play_arrow_24"
-        app:summary="@string/pref_header_video_summary"
-        app:title="@string/pref_header_video" />
-    <Preference
         app:fragment="com.ahmedtrooper.prism.preferences.PreferenceActivity$UIPreference"
         app:icon="@drawable/round_video_settings_24"
         app:summary="@string/pref_header_ui_summary"
@@ -26,19 +21,5 @@
         app:icon="@drawable/round_code_24"
         app:summary="@string/pref_header_developer_summary"
         app:title="@string/pref_header_developer" />
-    <Preference
-        app:fragment="com.ahmedtrooper.prism.preferences.PreferenceActivity$AdvancePreference"
-        app:icon="@drawable/round_settings_24"
-        app:summary="@string/pref_header_advanced_summary"
-        app:title="@string/pref_header_advanced" />
-
-    <Preference
-        app:icon="@drawable/round_info_24"
-        app:summary="@string/pref_header_about_mpv_summary"
-        app:title="@string/pref_header_about_mpv">
-        <intent
-            android:targetClass="com.ahmedtrooper.prism.preferences.AboutActivity"
-            android:targetPackage="com.ahmedtrooper.prism" />
-    </Preference>
 
 </PreferenceScreen>

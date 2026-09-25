@@ -95,6 +95,12 @@ Prism provides two product flavors to support different distribution models and 
 * **Item Menu & Structured Properties**: Play, Play from beginning, Share, and structured Properties card (File details with exact byte counts and Media specs).
 * **Polished Layout (Sep 2026)**: Unified 4dp spacing grid, 0.5dp hairline dividers, card borders with stroke, 48dp touch targets, focus/hover/ripple states for TV and mouse, and clean text truncation.
 
+### 1d. Streamlined Settings
+* **Four Curated Sections**: The Preferences screen is intentionally reduced to **General**, **UI**, **Gestures**, and **Developer** — every mpv-only knob (Advanced config editor, scaler / deband / interpolation / fast-decode selectors, gpu_next, gpudebug, stats mode overlay) is hidden so everyday users never see engine internals.
+* **Player-Side Decoder Toggle Preserved**: The HW+ / HW / SW hardware decoder switch stays in the player's top bar — that one control is user-facing because it directly affects battery, performance, and codec compatibility.
+* **Prism-Only About Screen**: The About activity now lists Prism version, build type, and credits only — no mpv log capture or upstream build information.
+* **Honest Defaults**: Hidden mpv internals still apply sensible defaults (`hwdec-codecs=all`, `gpu-context=android`, `opengl-es=force`, `audio-set-media-role=auto`, `input-default-bindings=yes`) at engine boot, so users get correct behavior without touching the removed switches.
+
 ### 1b. Online Streams Library
 * **JSON-Backed Catalog**: Categories and videos are stored in app-private JSON via `OnlineStreamManager`, with thread-safe load/save and format detection from URL extension.
 * **Category Browsing**: Tap a category in the Streams tab to open its videos. Long-press reveals delete; categories with subcategories require explicit confirm before descendant deletion.

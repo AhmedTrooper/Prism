@@ -23,22 +23,7 @@
         <item>Domyślny portret</item>
         <item>Urządzenie</item>
     </string-array>
-
-    <string-array name="deband_entries">
-        <item>Wyłączone</item>
-        <item>CPU</item>
-        <item>GPU</item>
-    </string-array>
-
-    <string-array name="stats_entries">
-        <item>Brak</item>
-        <item>Licznik klatek na sekundę</item>
-        <item>stats.lua: Ogólne</item>
-        <item>stats.lua: Czasy</item>
-        <item>stats.lua: Pamięć podręczna</item>
-    </string-array>
-
-    <string-array name="gestures_entries">
+<string-array name="gestures_entries">
         <item>Brak</item>
         <item>Przewijanie</item>
         <item>Głośność</item>

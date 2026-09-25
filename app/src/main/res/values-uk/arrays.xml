@@ -23,22 +23,7 @@
         <item>Типово портретна</item>
         <item>Як на пристрої</item>
     </string-array>
-
-    <string-array name="deband_entries">
-        <item>Вимкнено</item>
-        <item>Процесор</item>
-        <item>Відеокарта</item>
-    </string-array>
-
-    <string-array name="stats_entries">
-        <item>Нічого</item>
-        <item>Кадри за секунду</item>
-        <item>stats.lua: Загальне</item>
-        <item>stats.lua: Таймінг</item>
-        <item>stats.lua: Кеш</item>
-    </string-array>
-
-    <string-array name="gestures_entries">
+<string-array name="gestures_entries">
         <item>Нічого</item>
         <item>Позиціювання</item>
         <item>Гучність</item>

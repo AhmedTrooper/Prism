@@ -395,23 +395,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Diagnostic Stats Text -->
-        <TextView
-            android:id="@+id/statsTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="64dp"
-            android:shadowColor="#000000"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"
-            android:textColor="#00FF00"
-            android:visibility="gone"
-            tools:text="60 FPS" />
-
         <!-- Legacy General Gesture Text (kept for fallback) -->
         <TextView
             android:id="@+id/gestureTextView"

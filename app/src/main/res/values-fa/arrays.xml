@@ -23,22 +23,7 @@
         <item>پیش‌گزیده عمودی</item>
         <item>دستگاه</item>
     </string-array>
-
-    <string-array name="deband_entries">
-        <item>غیرفعال</item>
-        <item>CPU</item>
-        <item>GPU</item>
-    </string-array>
-
-    <string-array name="stats_entries">
-        <item>هیچکدام</item>
-        <item>شمارندهٔ فریم‌برثانیه</item>
-        <item>stats.lua: عمومی</item>
-        <item>stats.lua: زمان‌بندی</item>
-        <item>stats.lua: انباره</item>
-    </string-array>
-
-    <string-array name="gestures_entries">
+<string-array name="gestures_entries">
         <item>هیچکدام</item>
         <item>جابه‌جایی</item>
         <item>صدا</item>

@@ -22,22 +22,7 @@
         <item>Öntanımlı Dikey</item>
         <item>Aygıt</item>
     </string-array>
-
-    <string-array name="deband_entries">
-        <item>Devre dışı</item>
-        <item>CPU</item>
-        <item>GPU</item>
-    </string-array>
-
-    <string-array name="stats_entries">
-        <item>Yok</item>
-        <item>FPS sayacı</item>
-        <item>stats.lua: Genel</item>
-        <item>stats.lua: Zamanlamalar</item>
-        <item>stats.lua: Önbellek</item>
-    </string-array>
-
-    <string-array name="gestures_entries">
+<string-array name="gestures_entries">
         <item>Yok</item>
         <item>Ara</item>
         <item>Ses seviyesi</item>

@@ -122,12 +122,6 @@ class PreferenceActivity : AppCompatActivity(),
         }
     }
 
-    class VideoPreference : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.pref_video, rootKey)
-        }
-    }
-
     class UIPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_ui, rootKey)
@@ -151,12 +145,6 @@ class PreferenceActivity : AppCompatActivity(),
     class DeveloperPreference : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_developer, rootKey)
-        }
-    }
-
-    class AdvancePreference : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.pref_advanced, rootKey)
         }
     }
 }

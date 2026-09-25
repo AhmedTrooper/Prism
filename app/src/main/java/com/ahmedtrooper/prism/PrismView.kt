@@ -50,48 +50,13 @@ internal class PrismView(context: Context, attrs: AttributeSet) : BasePrismView(
         data class Property(val preferenceName: String, val mpvOption: String)
         val opts = arrayOf(
                 Property("default_audio_language", "alang"),
-                Property("default_subtitle_language", "slang"),
-
-                // vo-related
-                Property("video_scale", "scale"),
-                Property("video_scale_param1", "scale-param1"),
-                Property("video_scale_param2", "scale-param2"),
-
-                Property("video_downscale", "dscale"),
-                Property("video_downscale_param1", "dscale-param1"),
-                Property("video_downscale_param2", "dscale-param2"),
-
-                Property("video_tscale", "tscale"),
-                Property("video_tscale_param1", "tscale-param1"),
-                Property("video_tscale_param2", "tscale-param2")
+                Property("default_subtitle_language", "slang")
         )
 
         for ((preferenceName, mpvOption) in opts) {
             val preference = sharedPreferences.getString(preferenceName, "")
             if (!preference.isNullOrBlank())
                 PrismLib.setOptionString(mpvOption, preference)
-        }
-
-        val debandMode = sharedPreferences.getString("video_debanding", "")
-        if (debandMode == "gradfun") {
-            // lower the default radius (16) to improve performance
-            PrismLib.setOptionString("vf", "gradfun=radius=12")
-        } else if (debandMode == "gpu") {
-            PrismLib.setOptionString("deband", "yes")
-        }
-
-        val vidsync = sharedPreferences.getString("video_sync", resources.getString(R.string.pref_video_interpolation_sync_default))
-        PrismLib.setOptionString("video-sync", vidsync!!)
-
-        if (sharedPreferences.getBoolean("video_interpolation", false))
-            PrismLib.setOptionString("interpolation", "yes")
-
-        if (sharedPreferences.getBoolean("gpudebug", false))
-            PrismLib.setOptionString("gpu-debug", "yes")
-
-        if (sharedPreferences.getBoolean("video_fastdecode", false)) {
-            PrismLib.setOptionString("vd-lavc-fast", "yes")
-            PrismLib.setOptionString("vd-lavc-skiploopfilter", "nonkey")
         }
 
         PrismLib.setOptionString("gpu-context", "android")

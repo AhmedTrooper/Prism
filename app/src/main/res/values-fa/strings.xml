@@ -76,9 +76,6 @@
     <string name="pref_header_general">عمومی</string>
     <string name="pref_header_general_summary"></string>
 
-    <string name="pref_header_video">ویدیو</string>
-    <string name="pref_header_video_summary"></string>
-
     <string name="pref_header_ui">رابط کاربری</string>
     <string name="pref_header_ui_summary"></string>
 
@@ -87,12 +84,6 @@
 
     <string name="pref_header_developer">توسعه دهنده</string>
     <string name="pref_header_developer_summary"></string>
-
-    <string name="pref_header_advanced">پیشرفته</string>
-    <string name="pref_header_advanced_summary"></string>
-
-    <string name="pref_header_about_mpv">دربارهٔ ام‌پی‌وی</string>
-    <string name="pref_header_about_mpv_summary"></string>
 
     <string name="pref_default_file_manager_path_title">مسیر پیش‌گزیدهٔ مدیر پرونده</string>
 
@@ -144,48 +135,12 @@
 
     <string name="pref_gesture_custom_helptext">هنگامی که یک حرکت ضربه به «سفارشی» تنظیم شود؛ می‌توان با ویرایش input.conf آن را به هر دستوری مقید کرد. کدهای کلید <b>0x10001</b> (چپ)، <b>0x10002</b> (وسط)، <b>0x10003</b> (راست) هستند.\nبه عنوان مثال می‌توانید دوبار ضربه سمت راست را با دستور زیر به جابه‌جایی به ۶ ثانیهٔ بعد، مقید کنید:\n\t\t0x10003 no-osd seek 6</string>
 
-    <string name="pref_video_upscale_title">پالایهٔ افزایش مقیاس</string>
-
-    <string name="pref_video_downscale_title">پالایهٔ کاهش مقیاس</string>
-
-    <string name="pref_video_debanding_title">Debanding</string>
-    <string name="pref_video_debanding_summary">گزینش حالت debanding ویدیو.</string>
-
-    <string name="pref_video_interpolation_title">درون‌یابی</string>
-    <string name="pref_video_interpolation_message">حرکت تندوتیز و خشن قاب‌های ناشی از ناسازگاری FPS و نرخ نوسازی صفحه را کاهش می‌دهد.</string>
-
-    <string name="pref_video_tscale_title">پالایهٔ درون‌یابی زمانی</string>
-    <string name="pref_video_tscale_summary">گزینش پالایهٔ مورد استفاده برای درون‌یابی محور زمانی (قاب).</string>
-    <string name="pref_video_tscale_message">این تنظیمات فقط در صورت فعال بودن درون‌یابی اعمال می‌شود.</string>
-
-    <string name="pref_video_fastdecode_title">کدگشایی ویدیویی با کیفیت پایین</string>
-    <string name="pref_video_fastdecode_summary">کیفیت بازپخش را برای عملکرد بهتر و در نتیجه مسلط‌تر معامله می‌کند.\n<b>کیفیت را به شدت کاهش می‌دهد</b></string>
-
     <string name="pref_ignore_audio_focus_title">نادیده گرفتن صداهای دیگر</string>
     <string name="pref_ignore_audio_focus_summary">هنگامی که برنامه‌های دیگر همزمان صدا پخش می‌کنند، پخش را متوقف یا صدا را کم نمی‌کند.</string>
 
-    <string name="pref_stats_mode_title">نمایش آمار</string>
-    <string name="pref_stats_mode_summary">انتخاب کنید کدام آمار نمایش داده شود</string>
-
-    <string name="pref_gpu_debug_title">فعال کردن اشکال‌زدایی OpenGL</string>
-
-    <string name="pref_gpu_next_title">استفاده از gpu-next</string>
-    <string name="pref_gpu_next_summary">از ارائه دهندهٔ ویدیویی جدید مبتنی بر libplacebo استفاده می‌کند.</string>
-
     <string name="pref_version_info">اطلاعات نسخه</string>
 
-    <string name="pref_edit_mpv_conf">ویرایش mpv.conf</string>
-    <string name="pref_edit_mpv_conf_message">شما می‌توانید پیکربندی ام‌پی‌وی را به صورت مستقیم اینجا انجام دهید.</string>
-
-    <string name="pref_edit_input_conf">ویرایش input.conf</string>
-    <string name="pref_edit_input_conf_message">شما می‌توانید پروندهٔ input.conf اینجا ویرایش کنید، این برای تلویزیون و صفحه‌کلید بسیار کاربردی است.\n\nمهم: ام‌پی‌وی-اندروید چندین کلید اصلی دارید که در این اینجا قابل بازتعریف نیستند، به عنوان مثال: «j» برای تعویض زیرنویس.</string>
-
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_filter">تابع پالایه</string>
-    <string name="scaler_param1">مقدار ۱</string>
-    <string name="scaler_param2">مقدار ۲</string>
-    <string name="interpolation_switch">فعال کردن درون‌یابی</string>
-    <string name="interpolation_video_sync">همگام‌سازی ویدیو</string>
 
     <!-- File picker -->
     <string name="nnf_name">نام</string>

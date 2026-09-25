@@ -19,19 +19,7 @@
         <item>По умолчанию портретная</item>
         <item>Устройства</item>
     </string-array>
-    <string-array name="deband_entries">
-        <item>Отключён</item>
-        <item>CPU</item>
-        <item>GPU</item>
-    </string-array>
-    <string-array name="stats_entries">
-        <item>Ничего</item>
-        <item>FPS</item>
-        <item>stats.lua: общая</item>
-        <item>stats.lua: тайминг</item>
-        <item>stats.lua: кэш</item>
-    </string-array>
-    <string-array name="gestures_entries">
+<string-array name="gestures_entries">
         <item>Ничего</item>
         <item>Поиск</item>
         <item>Громкость</item>

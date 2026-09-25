@@ -72,11 +72,9 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">General</string>
-    <string name="pref_header_video">Vídeo</string>
     <string name="pref_header_ui">Interfaz de usuario</string>
     <string name="pref_header_gestures">Gestos táctiles</string>
     <string name="pref_header_developer">Desarrollador</string>
-    <string name="pref_header_advanced">Avanzado</string>
 
     <string name="pref_default_file_manager_path_title">Ruta predeterminada del administrador de archivos</string>
 
@@ -122,44 +120,12 @@
 
     <string name="pref_gesture_custom_helptext">Cuando un gesto de toque está configurado como \"Personalizado\", se puede vincular a cualquier comando editando input.conf. Los códigos clave son <b>0x10001</b> (izquierda), <b>0x10002</b> (centro), <b>0x10003</b> (derecha).\nPor ejemplo, puedes vincular para desplazarse por 6s:\n\t\t0x10003 no-osd seek 6</string>
 
-    <string name="pref_video_upscale_title">Filtro de aumento de escala</string>
-
-    <string name="pref_video_downscale_title">Filtro de reducción de escala</string>
-
-    <string name="pref_video_debanding_title">Desbandeado</string>
-    <string name="pref_video_debanding_summary">Seleccione el modo de desbandeado de vídeo</string>
-
-    <string name="pref_video_interpolation_title">Interpolación</string>
-    <string name="pref_video_interpolation_message">Reduce las vibraciones causadas por el desajuste entre los FPS de vídeo y la frecuencia de actualización de la pantalla.</string>
-
-    <string name="pref_video_tscale_title">Filtro de interpolación temporal</string>
-    <string name="pref_video_tscale_summary">Seleccione el filtro utilizado para interpolar el eje temporal (fotogramas)</string>
-    <string name="pref_video_tscale_message">Esta configuración solo tiene efecto si la interpolación está activada arriba.</string>
-
-    <string name="pref_video_fastdecode_title">Descodificación de vídeo de baja calidad</string>
-    <string name="pref_video_fastdecode_summary">Cambia la calidad por el rendimiento y, por lo tanto, una reproducción fluida.\n<b>REDUCE MUCHO LA CALIDAD</b></string>
-
     <string name="pref_ignore_audio_focus_title">Ignorar enfoque de audio</string>
     <string name="pref_ignore_audio_focus_summary">No pausa la reproducción ni reduce el volumen cuando otras aplicaciones reproducen audio al mismo tiempo.</string>
 
-    <string name="pref_stats_mode_title">Mostrar estadísticas</string>
-    <string name="pref_stats_mode_summary">Seleccione qué estadísticas se muestran</string>
-
-    <string name="pref_gpu_debug_title">Activar depuración OpenGL</string>
-
     <string name="pref_version_info">Información de versión</string>
 
-    <string name="pref_edit_mpv_conf">Editar mpv.conf</string>
-    <string name="pref_edit_mpv_conf_message">Puede editar directamente la configuración de mpv aquí.</string>
-
-    <string name="pref_edit_input_conf">Editar input.conf</string>
-    <string name="pref_edit_input_conf_message">Puede editar input.conf aquí, esto es principalmente útil para controles remotos de TV y teclados.\n\nImportante: mpv-android tiene algunas teclas codificadas que no se pueden redefinir aquí, por ejemplo \'j\' para alternar los subtítulos.</string>
-
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Parámetro 1</string>
-    <string name="scaler_param2">Parámetro 2</string>
-    <string name="interpolation_switch">Activar interpolación</string>
-    <string name="interpolation_video_sync">Sincronización de vídeo</string>
 
     <!-- File picker -->
     <string name="nnf_name">Nombre</string>

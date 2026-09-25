@@ -23,22 +23,7 @@
         <item>Vertical predeterminado</item>
         <item>Dispositivo</item>
     </string-array>
-
-    <string-array name="deband_entries">
-        <item>Desactivado</item>
-        <item>CPU</item>
-        <item>GPU</item>
-    </string-array>
-
-    <string-array name="stats_entries">
-        <item>Nada</item>
-        <item>Contador de FPS</item>
-        <item>stats.lua: General</item>
-        <item>stats.lua: Horarios</item>
-        <item>stats.lua: Caché</item>
-    </string-array>
-
-    <string-array name="gestures_entries">
+<string-array name="gestures_entries">
         <item>Nada</item>
         <item>Desplazamiento</item>
         <item>Volumen</item>

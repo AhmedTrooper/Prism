@@ -11,20 +11,7 @@
         <item>默认纵向</item>
         <item>设备</item>
     </string-array>
-    <string-array name="deband_entries">
-        <item>禁用</item>
-        <item>CPU</item>
-        <item>GPU</item>
-    </string-array>
-    <string-array name="stats_entries">
-        <item>无</item>
-        <item>仅帧率</item>
-        <item>stats.lua：常规</item>
-        <item>stats.lua：计时</item>
-        <item>stats.lua：缓存</item>
-    </string-array>
-
-    <string-array name="gestures_entries">
+<string-array name="gestures_entries">
         <item>无</item>
         <item>定位</item>
         <item>音量</item>

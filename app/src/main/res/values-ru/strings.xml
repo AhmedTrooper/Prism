@@ -66,12 +66,9 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Основные</string>
-    <string name="pref_header_video">Видео</string>
     <string name="pref_header_ui">Интерфейс</string>
     <string name="pref_header_gestures">Жесты</string>
     <string name="pref_header_developer">Для разработчиков</string>
-    <string name="pref_header_advanced">Дополнительные</string>
-    <string name="pref_header_about_mpv">О приложении mpv</string>
 
     <string name="pref_default_file_manager_path_title">Путь файлового менеджера по умолчанию</string>
 
@@ -128,48 +125,12 @@
 
     <string name="pref_gesture_custom_helptext">Если жест установлен на \"Своё\", его можно привязать к любой команде, отредактировав input.conf. Коды клавиш: <b>0x10001</b> (слева), <b>0x10002</b> (в центре), <b>0x10003</b> (справа).\nНапример, можно привязать поиск к 6 с:\n\t\t0x10003 no-osd seek 6</string>
 
-    <string name="pref_video_upscale_title">Фильтр увеличения масштаба</string>
-
-    <string name="pref_video_downscale_title">Фильтр уменьшения масштаба</string>
-
-    <string name="pref_video_debanding_title">Дебандинг</string>
-    <string name="pref_video_debanding_summary">Выбор режима устранения полос на видео.</string>
-
-    <string name="pref_video_interpolation_title">Интерполяция</string>
-    <string name="pref_video_interpolation_message">Уменьшение дрожания, вызванного несоответствием FPS видео и частоты обновления экрана.</string>
-
-    <string name="pref_video_tscale_title">Фильтр временной интерполяции</string>
-    <string name="pref_video_tscale_summary">Выбор фильтра, используемого для интерполяции временной оси (кадров).</string>
-    <string name="pref_video_tscale_message">Эти настройки используются только при включённой интерполяции.</string>
-
-    <string name="pref_video_fastdecode_title">Декодирование видео низкого качества</string>
-    <string name="pref_video_fastdecode_summary">Заменяет качество на скорость и, следовательно, плавное воспроизведение.\n<b>НАМНОГО СНИЖАЕТ КАЧЕСТВО</b>.</string>
-
     <string name="pref_ignore_audio_focus_title">Игнорировать фокус аудио</string>
     <string name="pref_ignore_audio_focus_summary">Если выбрано, воспроизведение не будет приостанавливаться или уменьшаться громкость, когда другие приложения воспроизводят звук.</string>
 
-    <string name="pref_stats_mode_title">Показывать статистику</string>
-    <string name="pref_stats_mode_summary">Выбор отображаемой статистики.</string>
-
-    <string name="pref_gpu_debug_title">Включить отладку OpenGL</string>
-
-    <string name="pref_gpu_next_title">Использовать GPU-next</string>
-    <string name="pref_gpu_next_summary">Использовать новый модуль визуализации видео, основанный на libplacebo.</string>
-
     <string name="pref_version_info">Информация о версии</string>
 
-    <string name="pref_edit_mpv_conf">Редактировать mpv.conf</string>
-    <string name="pref_edit_mpv_conf_message">Можно напрямую отредактировать конфигурацию mpv здесь.</string>
-
-    <string name="pref_edit_input_conf">Редактировать input.conf</string>
-    <string name="pref_edit_input_conf_message">Можно отредактировать input.conf здесь, это в основном полезно для телевизионных пультов и клавиатур.\n\n\nВажно: mpv-android имеет некоторые жёстко закодированные клавиши, которые нельзя переопределить здесь, например, \"j\" для цикла субтитров.</string>
-
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_filter">Параметры фильтра</string>
-    <string name="scaler_param1">Параметр 1</string>
-    <string name="scaler_param2">Параметр 2</string>
-    <string name="interpolation_switch">Включить интерполяцию</string>
-    <string name="interpolation_video_sync">Синхронизация видео</string>
 
     <!-- File picker -->
     <string name="nnf_name">Имя</string>

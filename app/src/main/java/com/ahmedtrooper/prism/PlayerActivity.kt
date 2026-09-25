@@ -176,8 +176,6 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
     }
 
     /* Settings */
-    private var statsFPS = false
-    private var statsLuaMode = 0 // ==0 disabled, >0 page number
 
     private var backgroundPlayMode = ""
     private var noUIPauseMode = ""
@@ -524,12 +522,6 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
 
         gestures.syncSettings(prefs, resources)
 
-        val statsMode = prefs.getString("stats_mode", "") ?: ""
-        this.statsFPS = statsMode == "native_fps"
-        this.statsLuaMode = if (statsMode.startsWith("lua"))
-            statsMode.removePrefix("lua").toInt()
-        else
-            0
         this.backgroundPlayMode = getString("background_play", R.string.pref_background_play_default)
         this.noUIPauseMode = getString("no_ui_pause", R.string.pref_no_ui_pause_default)
         this.shouldSavePosition = prefs.getBoolean("save_position", false)
@@ -744,12 +736,6 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         }
     }
 
-    private fun updateStats() {
-        if (!statsFPS)
-            return
-        binding.statsTextView.text = getString(R.string.ui_fps, player.estimatedVfFps)
-    }
-
     private fun controlsShouldBeVisible(): Boolean {
         if (lockedUI)
             return false
@@ -776,11 +762,6 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
             binding.controls.visibility = View.VISIBLE
             binding.topControls.visibility = View.VISIBLE
 
-            if (this.statsFPS) {
-                updateStats()
-                binding.statsTextView.visibility = View.VISIBLE
-            }
-
             val insetsController = WindowCompat.getInsetsController(window, window.decorView)
             insetsController.show(WindowInsetsCompat.Type.navigationBars())
         }
@@ -798,7 +779,6 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         // see http://stackoverflow.com/a/12655713/2606891
         binding.controls.visibility = View.GONE
         binding.topControls.visibility = View.GONE
-        binding.statsTextView.visibility = View.GONE
 
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.hide(WindowInsetsCompat.Type.systemBars())
@@ -1770,7 +1750,6 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
 
         // Note: do NOT add other update functions here just because this is called every second.
         // Use property observation instead.
-        updateStats()
     }
 
     private fun updatePlaybackDuration(duration: Int) {
@@ -2078,9 +2057,6 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
             onloadCommands.clear()
             for (c in cmds)
                 PrismLib.command(c)
-            if (this.statsLuaMode > 0 && !playbackHasStarted) {
-                PrismLib.command(arrayOf("script-binding", "stats/display-page-${this.statsLuaMode}-toggle"))
-            }
 
             currentZoom = 0.0
             currentPanX = 0.0

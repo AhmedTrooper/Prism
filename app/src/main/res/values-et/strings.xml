@@ -72,11 +72,9 @@
 
     <!-- Strings related to Settings -->
     <string name="pref_header_general">Üldine</string>
-    <string name="pref_header_video">Video</string>
     <string name="pref_header_ui">Kasutajaliid</string>
     <string name="pref_header_gestures">Puudumise liigutused</string>
     <string name="pref_header_developer">Arendajale</string>
-    <string name="pref_header_advanced">Rohkem</string>
 
     <string name="pref_default_file_manager_path_title">Vaikimisi Failihaldur asukoht</string>
 
@@ -125,47 +123,12 @@
 
     <string name="pref_gesture_custom_helptext">Kui topsa puudumine on määratud \"Muud\" seda saad panna iga käsu input.conf muutmiselt. Võtikoodid on <b>0x10001</b> (vasak), <b>0x10002</b> (kesk), <b>0x10003</b> (parem).\nNäiteks võid lisada 6 sek kerida:\n\t\t0x10003 no-osd seek 6</string>
 
-    <string name="pref_video_upscale_title">Üles skaleerimine filtri</string>
-
-    <string name="pref_video_downscale_title">Alla skaleerimine filtri</string>
-
-    <string name="pref_video_debanding_title">Debandeerimine</string>
-    <string name="pref_video_debanding_summary">Vali video debandeerimine režiimi.</string>
-
-    <string name="pref_video_interpolation_title">Interpolatsioon</string>
-    <string name="pref_video_interpolation_message">Vähenda judderi tekkinult pole sama video FPS ja ekraan värske hinnang.</string>
-
-    <string name="pref_video_tscale_title">Temporaal interpolatsioon filtri</string>
-    <string name="pref_video_tscale_summary">Valige filtri kasutatud interpolatsioonilt temporaalne aksis (vraamid).</string>
-    <string name="pref_video_tscale_message">Need tööristad võtab effekti ainult kui interpolatsioon on sees üleval.</string>
-
-    <string name="pref_video_fastdecode_title">Madal kvaliteet video dekodeerimine</string>
-    <string name="pref_video_fastdecode_summary">Kaubandab kvaliteeti tõhusele ja laduesitus.\n<b>VÄHENDAB KVALITEETI PALJU</b></string>
-
     <string name="pref_ignore_audio_focus_title">Ignoneeri audio keskundus</string>
     <string name="pref_ignore_audio_focus_summary">Ära tee pausi esitus või vähenda helitugevusi kui muud rakendused mängib audio sama aega.</string>
 
-    <string name="pref_stats_mode_title">Näita statistika</string>
-    <string name="pref_stats_mode_summary">Vali milline statistika on näidatud</string>
-
-    <string name="pref_gpu_debug_title">Luba OpenGL silumist</string>
-
-    <string name="pref_gpu_next_title">Kasuta gpu-next</string>
-    <string name="pref_gpu_next_summary">Kasuta uue video rendrimise tagalõpp, tehtud libplacebo-nis.</string>
-
     <string name="pref_version_info">Versioon informatsioon</string>
 
-    <string name="pref_edit_mpv_conf">Muuda mpv.conf</string>
-    <string name="pref_edit_mpv_conf_message">Võite muuda mpv\'i konfigratsioon siin.</string>
-
-    <string name="pref_edit_input_conf">Muuda input.conf</string>
-    <string name="pref_edit_input_conf_message">Võid muuda input.conf siin, see on üli kasutusel telekapulte and klaviatuurid.\n\nTähtis: mpv-android on mõned raskekooditud nuppud mis võib\ei saa töötleda, näide \'j\', et subtiitri vahetada.</string>
-
     <!-- Strings used in Settings dialog preferences -->
-    <string name="scaler_param1">Pararammi 1:</string>
-    <string name="scaler_param2">Pararammi 2:</string>
-    <string name="interpolation_switch">Luba interpolatsioon</string>
-    <string name="interpolation_video_sync">Video sünkroneeri:</string>
 
     <!-- File picker -->
     <string name="nnf_name">Nimi</string>
