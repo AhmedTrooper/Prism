@@ -82,6 +82,7 @@ Prism provides two product flavors to support different distribution models and 
   * Corner red circular badge on folder icons indicating count of newly added videos.
   * 72dp indented hairline dividers matching text alignment.
   * Inside folder view cleanly displays the folder title alone without redundant counts in the top bar.
+* **Pull-to-Refresh**: Swipe down from the top of the folder or video list to re-scan the MediaStore and update counts, badges, and newly added items. The spinner uses the Prism cobalt blue primary color and stays visible until the scan coroutine finishes.
 * **Video List & Grid Views**:
   * 16:9 thumbnail previews with corner duration pills.
   * Authentic red `NEW` pill badges (`#E53935`) on video thumbnails.

@@ -40,6 +40,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.ahmedtrooper.prism.databinding.FragmentMainScreenBinding
 import com.ahmedtrooper.prism.preferences.PreferenceActivity
 import android.animation.AnimatorSet
@@ -244,6 +245,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         if (_binding == null) return
         stopPulseAnimation()
         binding.loadingLayout.isVisible = false
+        // Always dismiss the swipe spinner so pull-to-refresh doesn't stick around.
+        binding.mediaSwipeRefresh.isRefreshing = false
         binding.mediaRecyclerView.isVisible = true
     }
 
@@ -317,6 +320,17 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         // Refresh Media Library
         binding.refreshBtn.setOnClickListener {
+            scanMediaLibrary()
+        }
+
+        // Pull-to-refresh on the media list re-runs the full MediaStore scan.
+        // The refresh spinner stays on until scanMediaLibrary's coroutine finishes
+        // and hides it via hideLoading().
+        binding.mediaSwipeRefresh.setColorSchemeResources(
+            R.color.prism_primary,
+            R.color.prism_primary_dark
+        )
+        binding.mediaSwipeRefresh.setOnRefreshListener {
             scanMediaLibrary()
         }
 

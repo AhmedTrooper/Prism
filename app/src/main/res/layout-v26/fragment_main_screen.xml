@@ -191,16 +191,24 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- Media List / Folder List -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/mediaRecyclerView"
+        <!-- Pull-to-refresh wrapper around the media list.
+             SwipeRefreshLayout ships transitively with com.google.android.material:material -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/mediaSwipeRefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingTop="@dimen/spacing_8"
-            android:paddingBottom="@dimen/spacing_8"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/item_media_folder" />
+            android:layout_height="match_parent">
+
+            <!-- Media List / Folder List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/mediaRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="@dimen/spacing_8"
+                android:paddingBottom="@dimen/spacing_8"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_media_folder" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <!-- Empty State Message -->
         <LinearLayout
