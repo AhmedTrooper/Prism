@@ -7,12 +7,12 @@
     android:background="?android:attr/colorBackground"
     android:orientation="vertical">
 
-    <!-- Authentic MX Player Cobalt Blue Action Bar -->
+    <!-- Authentic MX Player Action Bar -->
     <FrameLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/appbar_height"
-        android:background="@color/mx_blue"
+        android:background="?android:attr/colorBackground"
         android:elevation="@dimen/elevation_appbar">
 
         <!-- Normal Title Bar -->
@@ -31,45 +31,47 @@
                 style="?buttonBarButtonStyle"
                 android:layout_width="@dimen/touch_target"
                 android:layout_height="@dimen/touch_target"
+                android:layout_marginStart="-8dp"
+                android:layout_marginEnd="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Back"
-                android:padding="10dp"
+                android:padding="12dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_arrow_back_24dp"
-                app:tint="@android:color/white"
+                app:tint="?android:attr/textColorPrimary"
                 tools:visibility="visible" />
 
             <!-- Title Layout -->
-            <LinearLayout
+            <TextView
+                android:id="@+id/appTitleTxt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Folders"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/appTitleTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="@string/app_name"
-                    android:textColor="@android:color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/folderCountSubtitleTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:text="" />
 
-                <TextView
-                    android:id="@+id/folderCountSubtitleTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:textColor="#D0FFFFFF"
-                    android:textSize="15sp"
-                    android:visibility="gone"
-                    tools:text="(27)"
-                    tools:visibility="visible" />
-            </LinearLayout>
+            <!-- Folder All Mode Action -->
+            <ImageButton
+                android:id="@+id/folderAllBtn"
+                style="?buttonBarButtonStyle"
+                android:layout_width="@dimen/touch_target"
+                android:layout_height="@dimen/touch_target"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="All Videos"
+                android:padding="12dp"
+                app:srcCompat="@drawable/ic_folder_all_24dp"
+                app:tint="?android:attr/textColorPrimary" />
 
             <!-- Search Action -->
             <ImageButton
@@ -79,11 +81,11 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Search"
-                android:padding="9dp"
+                android:padding="12dp"
                 app:srcCompat="@drawable/ic_search_24dp"
-                app:tint="@android:color/white" />
+                app:tint="?android:attr/textColorPrimary" />
 
-            <!-- View Mode Switch (Folders / All Videos / Grid) -->
+            <!-- View Mode Switch (Grid vs List Layout) -->
             <ImageButton
                 android:id="@+id/viewModeBtn"
                 style="?buttonBarButtonStyle"
@@ -91,9 +93,9 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Toggle View Mode"
-                android:padding="9dp"
-                app:srcCompat="@drawable/ic_view_module_24dp"
-                app:tint="@android:color/white" />
+                android:padding="12dp"
+                app:srcCompat="@drawable/ic_mx_layout_switcher"
+                app:tint="?android:attr/textColorPrimary" />
 
             <!-- Refresh Media Library -->
             <ImageButton
@@ -103,9 +105,10 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Refresh"
-                android:padding="9dp"
+                android:padding="12dp"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_refresh_24dp"
-                app:tint="@android:color/white" />
+                app:tint="?android:attr/textColorPrimary" />
 
             <!-- Overflow 3-Dots Menu -->
             <ImageButton
@@ -115,16 +118,17 @@
                 android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="More options"
-                android:padding="9dp"
+                android:padding="12dp"
                 app:srcCompat="@drawable/ic_more_vert_24dp"
-                app:tint="@android:color/white" />
+                app:tint="?android:attr/textColorPrimary" />
         </LinearLayout>
 
-        <!-- Search Mode Bar (Integrated into MX Blue Header) -->
+        <!-- Search Mode Bar -->
         <LinearLayout
             android:id="@+id/searchBarLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?android:attr/colorBackground"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingStart="@dimen/spacing_16"
@@ -137,40 +141,39 @@
                 style="?buttonBarButtonStyle"
                 android:layout_width="@dimen/touch_target"
                 android:layout_height="@dimen/touch_target"
+                android:layout_marginStart="-8dp"
+                android:layout_marginEnd="4dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Close search"
-                android:padding="10dp"
+                android:padding="12dp"
                 app:srcCompat="@drawable/ic_arrow_back_24dp"
-                app:tint="@android:color/white" />
+                app:tint="?android:attr/textColorPrimary" />
 
             <EditText
                 android:id="@+id/searchEditText"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/spacing_8"
                 android:layout_weight="1"
                 android:background="@null"
                 android:hint="Search videos or folders..."
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
-                android:paddingStart="@dimen/spacing_8"
-                android:paddingEnd="@dimen/spacing_8"
-                android:textColor="@android:color/white"
-                android:textColorHint="#8FFFFFFF"
-                android:textSize="@dimen/text_title" />
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="@color/mx_text_secondary_theme"
+                android:textSize="17sp" />
 
             <ImageButton
                 android:id="@+id/clearSearchTextBtn"
                 style="?buttonBarButtonStyle"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/touch_target"
+                android:layout_height="@dimen/touch_target"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Clear"
-                android:padding="@dimen/spacing_8"
+                android:padding="12dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_close_white_24dp"
-                app:tint="@android:color/white" />
+                app:tint="?android:attr/textColorPrimary" />
         </LinearLayout>
     </FrameLayout>
 

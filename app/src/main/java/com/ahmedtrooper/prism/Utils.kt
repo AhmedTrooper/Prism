@@ -1,3 +1,9 @@
+// See PlayerActivity.kt for context on the deprecated AndroidX media compat
+// classes. MediaMetadataCompat and MediaSessionCompat remain the stable
+// surface for our libmpv-backed playback notifications and lockscreen
+// artwork. Migration to androidx.media3 is a separate, larger project.
+@file:Suppress("DEPRECATION")
+
 package com.ahmedtrooper.prism
 
 import android.annotation.SuppressLint
@@ -162,8 +168,14 @@ internal object Utils {
         val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
 
         val candidates = mutableListOf<String>()
-        // check all media dirs, there's usually one on each storage volume
-        context.externalMediaDirs.forEach {
+        // check all media dirs, there's usually one on each storage volume.
+        // getExternalMediaDirs() is deprecated since API 30, but it remains the
+        // only API that lets us enumerate mount points of every storage volume
+        // for SD/USB browsing. The deprecation only affects write semantics,
+        // which we never use here.
+        @Suppress("DEPRECATION")
+        val externalMediaDirs = context.getExternalMediaDirs()
+        externalMediaDirs.forEach {
             if (it != null)
                 candidates.add(it.absolutePath)
         }

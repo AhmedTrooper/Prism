@@ -137,7 +137,13 @@ internal class PrismView(context: Context, attrs: AttributeSet) : BasePrismView(
     }
 
     fun onKey(event: KeyEvent): Boolean {
-        if (event.action == KeyEvent.ACTION_MULTIPLE)
+        // ACTION_MULTIPLE is deprecated in API 29+ because the framework can
+        // dispatch multiple keys per event. The constant is still emitted by
+        // some IMEs and keyboard devices on Android 6-10, so we keep the check
+        // for legacy support and suppress the platform deprecation warning.
+        @Suppress("DEPRECATION")
+        val isMultiple = event.action == KeyEvent.ACTION_MULTIPLE
+        if (isMultiple)
             return false
         if (KeyEvent.isModifierKey(event.keyCode))
             return false

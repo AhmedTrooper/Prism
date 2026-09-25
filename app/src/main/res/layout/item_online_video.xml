@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/row_video_height"
+    android:background="@drawable/bg_row_selector"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/spacing_16"
+        android:paddingEnd="@dimen/spacing_8">
+
+        <!-- Stream Thumbnail / Icon Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="112dp"
+            android:layout_height="64dp"
+            app:cardBackgroundColor="@color/mx_surface_variant"
+            app:cardCornerRadius="@dimen/radius_card"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/mx_outline_variant"
+            app:strokeWidth="1dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Stream Play Icon -->
+                <ImageView
+                    android:id="@+id/streamPlaceholderIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="Stream"
+                    app:srcCompat="@drawable/round_play_arrow_24"
+                    app:tint="@color/mx_blue" />
+
+                <!-- Format Badge (HLS, M3U8, MP4, LIVE) -->
+                <TextView
+                    android:id="@+id/streamBadgeTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/badge_mx_new"
+                    android:paddingStart="4dp"
+                    android:paddingTop="1dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="1dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    tools:text="HLS" />
+
+                <!-- Live / Stream Duration / Tag -->
+                <TextView
+                    android:id="@+id/streamTypeTagTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="3dp"
+                    android:background="@drawable/badge_duration"
+                    android:paddingStart="4dp"
+                    android:paddingTop="1dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="1dp"
+                    android:text="ONLINE"
+                    android:textColor="@android:color/white"
+                    android:textSize="9sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Stream Info Column -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/streamTitleTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="@dimen/text_body"
+                android:textStyle="bold"
+                tools:text="Sky Sports News HD" />
+
+            <TextView
+                android:id="@+id/streamUrlTxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:ellipsize="middle"
+                android:maxLines="1"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="@dimen/text_label"
+                tools:text="https://stream.example.com/live/index.m3u8" />
+        </LinearLayout>
+
+        <!-- Stream 3-Dots Menu Button -->
+        <ImageButton
+            android:id="@+id/streamMoreBtn"
+            style="?buttonBarButtonStyle"
+            android:layout_width="@dimen/touch_target"
+            android:layout_height="@dimen/touch_target"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="More options"
+            android:padding="@dimen/spacing_8"
+            app:srcCompat="@drawable/ic_more_vert_24dp"
+            app:tint="?android:attr/textColorSecondary" />
+    </LinearLayout>
+
+    <!-- Hairline Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_hairline"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="142dp"
+        android:background="@color/mx_divider_subtle" />
+
+</RelativeLayout>

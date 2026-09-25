@@ -4,16 +4,16 @@ ext.abiCodes = ["armeabi-v7a": 1, "arm64-v8a": 2, "x86":3, "x86_64":4]
 ext.universalBase = 8000
 
 android {
-    namespace 'com.ahmedtrooper.prism'
+    namespace = 'com.ahmedtrooper.prism'
     compileSdk = 36
 
     defaultConfig {
-        applicationId "com.ahmedtrooper.prism"
-        minSdkVersion 23
-        targetSdk 36
+        applicationId = "com.ahmedtrooper.prism"
+        minSdkVersion = 23
+        targetSdk = 36
 
-        versionCode 48
-        versionName "2026-09-17-release"
+        versionCode = 49
+        versionName = "2026-09-25-release"
 
         vectorDrawables.useSupportLibrary = true
 
@@ -29,11 +29,11 @@ android {
     flavorDimensions "default"
     productFlavors {
         "default" {
-            isDefault true
+            isDefault = true
         }
         allstorage {
-            versionNameSuffix "-allstorage"
-            minSdkVersion 30
+            versionNameSuffix = "-allstorage"
+            minSdkVersion = 30
         }
     }
 
@@ -53,7 +53,7 @@ android {
     splits {
         abi {
             // workaround: AGP fails to build split APKs and a bundle at the same time
-            enable !gradle.startParameter.taskNames.any { it.startsWith("bundle") }
+            enable = !gradle.startParameter.taskNames.any { it.startsWith("bundle") }
 
             reset()
             // include only the ABIs that were actually built
@@ -61,7 +61,7 @@ android {
                 if (new File(project.projectDir, "src/main/jniLibs/${abi}").exists())
                     include(abi)
             }
-            universalApk true // build an APK with all ABIs too
+            universalApk = true // build an APK with all ABIs too
         }
     }
 }
@@ -84,8 +84,10 @@ androidComponents {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.7.1'
+    // Resolve kotlin_version from the root project's build script explicitly
+    // (Gradle 10 disallows implicit parent lookups for ext.* properties).
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:${rootProject.ext.kotlin_version}"
+    implementation 'androidx.appcompat:appcompat:1.8.0'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.media:media:1.8.0'
     implementation 'androidx.preference:preference-ktx:1.2.1'
@@ -93,5 +95,8 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.test:core:1.6.1'
-    testImplementation 'org.mockito:mockito-core:5.11.0'
+    testImplementation 'org.mockito:mockito-core:5.24.0'
+    // Replace the Android stub org.json with a real implementation so
+    // OnlineStreamManager's persistence layer can be unit-tested.
+    testImplementation 'org.json:json:20240303'
 }

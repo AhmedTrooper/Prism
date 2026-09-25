@@ -1,3 +1,13 @@
+// MediaSessionCompat / PlaybackStateCompat are flagged deprecated in AndroidX
+// media 1.8.0. The AndroidX media team recommends migrating to androidx.media3,
+// which is a substantial engine replacement (own Player, ExoPlayer-based
+// playback). Since Prism uses libmpv via JNI rather than ExoPlayer, a media3
+// migration is a separate engineering project and is tracked outside of this
+// change. Until that lands, we continue using the AndroidX compat classes so
+// we can keep supporting Android 6 (API 23) and above. The classes still
+// resolve and behave correctly; only the deprecation flag is suppressed.
+@file:Suppress("DEPRECATION")
+
 package com.ahmedtrooper.prism
 
 import com.ahmedtrooper.prism.databinding.PlayerBinding

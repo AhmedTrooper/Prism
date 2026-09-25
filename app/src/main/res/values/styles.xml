@@ -3,16 +3,21 @@
     <style name="FilePickerTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="nnf_separator_color">@color/mx_blue</item>
 
-        <!-- Cobalt Blue Theme -->
+        <!-- MX Player Clean Surface Theme -->
         <item name="colorPrimary">@color/mx_blue</item>
-        <item name="colorPrimaryDark">@color/mx_blue_dark</item>
+        <item name="colorPrimaryDark">@color/mx_window_bg</item>
         <item name="colorAccent">@color/mx_blue</item>
-        <item name="android:statusBarColor">@color/mx_blue_dark</item>
+        <item name="android:colorBackground">@color/mx_window_bg</item>
+        <item name="android:statusBarColor">@color/mx_window_bg</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:navigationBarColor">@color/mx_window_bg</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
 
         <!-- Need to set this also to style create folder dialog -->
         <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>
-        <item name="android:textColorPrimary">@android:color/background_light</item>
-        <item name="android:textColorLink">@android:color/background_light</item>
+        <item name="android:textColorPrimary">@color/mx_text_primary_theme</item>
+        <item name="android:textColorSecondary">@color/mx_text_secondary_theme</item>
+        <item name="android:textColorLink">@color/mx_blue</item>
     </style>
 
     <style name="FilePickerThemeSpecial" parent="FilePickerTheme">

@@ -38,4 +38,9 @@
     <color name="nnf_light_separator_color">#1e000000</color>
     <!-- 12% white in BLACK THEME -->
     <color name="nnf_dark_separator_color">#1effffff</color>
+
+    <!-- Modern MX Player Light Theme Colors -->
+    <color name="mx_window_bg">#FFFFFF</color>
+    <color name="mx_text_primary_theme">#1C1B1F</color>
+    <color name="mx_text_secondary_theme">#757575</color>
 </resources>

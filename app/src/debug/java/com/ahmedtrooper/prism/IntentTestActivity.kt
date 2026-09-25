@@ -7,6 +7,7 @@ import android.util.Base64
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.BundleCompat
 import com.ahmedtrooper.prism.databinding.ActivityIntentTestBinding
 
 class IntentTestActivity : AppCompatActivity() {
@@ -20,7 +21,10 @@ class IntentTestActivity : AppCompatActivity() {
             val extras = intent.extras
             if (extras != null) {
                 for (key in extras.keySet()) {
-                    val v = extras.get(key)
+                    // Use BundleCompat typed accessors instead of the deprecated
+                    // generic Bundle.get(key).
+                    val v: Any? = BundleCompat.getParcelable(extras, key, Uri::class.java)
+                        ?: BundleCompat.getSerializable<java.io.Serializable>(extras, key, java.io.Serializable::class.java)
                     updateText("extras[$key] = $v\n")
                 }
             }

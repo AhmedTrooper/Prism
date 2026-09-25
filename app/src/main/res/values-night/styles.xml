@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="FilePickerTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="nnf_separator_color">@color/mx_blue</item>
+        <item name="colorPrimary">@color/mx_blue</item>
+        <item name="colorPrimaryDark">@color/mx_window_bg</item>
+        <item name="colorAccent">@color/mx_blue</item>
+        <item name="android:colorBackground">@color/mx_window_bg</item>
+        <item name="android:statusBarColor">@color/mx_window_bg</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:navigationBarColor">@color/mx_window_bg</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+        <item name="alertDialogTheme">@style/FilePickerTheme.AlertDialog</item>
+        <item name="android:textColorPrimary">@color/mx_text_primary_theme</item>
+        <item name="android:textColorSecondary">@color/mx_text_secondary_theme</item>
+        <item name="android:textColorLink">@color/mx_blue</item>
+    </style>
+</resources>

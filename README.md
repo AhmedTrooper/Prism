@@ -65,6 +65,7 @@ Prism provides two product flavors to support different distribution models and 
 ## Features
 
 ### 1. Clean Media Interface
+* **MX-Style Bottom Navigation**: Bottom bar with three tabs — Local (folder browser), Streams (online video library), and Me (settings, app info, library rescan). Tabs keep their state across orientation changes and back-stack restoration.
 * **Branded Splash Screen**: Instant zero-delay window launch with signature geometric crystalline Prism emblem and bold typography, smoothly fading into the media library.
 * **Cobalt Blue Header**: Solid blue Action Bar (`#007AFF`) and dark blue status bar (`#0066D6`).
 * **Media Folder Browser (Authentic MX Style)**:
@@ -84,6 +85,12 @@ Prism provides two product flavors to support different distribution models and 
 * **Branded Loading & Searching Indicator**: Features the animated crystalline Prism logo with smooth breathing luminescence during media library scans, folder transitions, and search queries, plus stylized Prism placeholders inside video cards while thumbnails load.
 * **Item Menu & Structured Properties**: Play, Play from beginning, Share, and structured Properties card (File details with exact byte counts and Media specs).
 * **Polished Layout (Sep 2026)**: Unified 4dp spacing grid, 0.5dp hairline dividers, card borders with stroke, 48dp touch targets, focus/hover/ripple states for TV and mouse, and clean text truncation.
+
+### 1b. Online Streams Library
+* **JSON-Backed Catalog**: Categories and videos are stored in app-private JSON via `OnlineStreamManager`, with thread-safe load/save and format detection from URL extension.
+* **Category Browsing**: Tap a category in the Streams tab to open its videos. Long-press reveals delete; categories with subcategories require explicit confirm before descendant deletion.
+* **Video Playback**: Tap a video to open it in `PlayerActivity`. Rescan, add, and delete operations are persisted on the same JSON file.
+* **Unit Tested**: 13 JUnit tests cover load/save round-trips, CRUD on categories and videos, format detection from URLs, descendant deletion semantics, and persistence across re-reads.
 
 ### 2. Player Controls & Decoder Switcher
 * **Decoder Toggle**: Instant switching between `HW+` (Hardware Plus), `HW` (MediaCodec), and `SW` (Software FFmpeg) directly from the top bar.
@@ -119,6 +126,17 @@ Prism provides two product flavors to support different distribution models and 
 * Android SDK 36 (Build Tools 36.0.0)
 * Android NDK 27.2.12479018 (specified in `ndk.properties`)
 * JDK 17 or JDK 21
+* Gradle 9.8.0 (managed by the wrapper — `./gradlew` will fetch it on first run)
+
+### Build Toolchain
+
+| Component | Version | Purpose |
+| :--- | :--- | :--- |
+| Gradle | 9.8.0 | Build automation (`gradle/wrapper/gradle-wrapper.properties`) |
+| Android Gradle Plugin | 9.4.1 | Android build pipeline (root `build.gradle`) |
+| Kotlin | 2.4.20 | Source compilation and JVM target |
+| compileSdk / targetSdk | 36 (Android 16) | Latest Android features and scoped storage |
+| minSdk | 23 (Android 6.0 Marshmallow) | Broad device coverage while staying on a current security baseline |
 
 ### Build Debug APK
 ```bash
@@ -146,6 +164,12 @@ Output APKs will be in `app/build/outputs/apk/<flavor>/release/`:
 
 ### Compiling Native Dependencies
 To recompile `libmpv`, `ffmpeg`, and related libraries from source, follow the instructions in [`buildscripts/README.md`](buildscripts/README.md).
+
+### Run Unit Tests
+```bash
+./gradlew :app:testDefaultDebugUnitTest
+```
+Reports land in `app/build/reports/tests/testDefaultDebugUnitTest/index.html`. The current suite covers the online streams catalog, A-B loop math, media browser filtering, and shared utilities.
 
 ---
 

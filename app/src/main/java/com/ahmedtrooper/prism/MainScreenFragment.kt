@@ -292,22 +292,27 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             applyFilterAndDisplay()
         }
 
-        // View Mode Switch (Folders vs All Videos vs Grid)
-        binding.viewModeBtn.setOnClickListener {
+        // Folder All Button (Toggle between Folders mode and All Videos mode)
+        binding.folderAllBtn.setOnClickListener {
             if (currentFolderId != null) {
-                // Inside folder: toggle Grid vs List
-                isGridMode = !isGridMode
-                updateLayoutManager()
+                currentFolderId = null
+                currentFolderName = ""
+                isFolderView = false
                 applyFilterAndDisplay()
             } else if (isFolderView) {
-                // At root: switch to All Videos
                 isFolderView = false
                 applyFilterAndDisplay()
             } else {
-                // In All Videos: switch back to Folders
                 isFolderView = true
                 applyFilterAndDisplay()
             }
+        }
+
+        // View Mode Switch (Grid vs List Layout)
+        binding.viewModeBtn.setOnClickListener {
+            isGridMode = !isGridMode
+            updateLayoutManager()
+            applyFilterAndDisplay()
         }
 
         // Refresh Media Library
@@ -368,15 +373,20 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     private fun showOverflowMenu(anchor: View) {
         val popup = PopupMenu(requireContext(), anchor)
+        popup.menu.add(0, 5, 0, "Refresh Library")
         if (currentFolderId != null || !isFolderView) {
-            popup.menu.add(0, 4, 0, if (isGridMode) "Switch to List View" else "Switch to Grid View")
+            popup.menu.add(0, 4, 1, if (isGridMode) "Switch to List View" else "Switch to Grid View")
         }
-        popup.menu.add(0, 1, 1, "Network Stream")
-        popup.menu.add(0, 2, 2, "Open File")
-        popup.menu.add(0, 3, 3, "Settings")
+        popup.menu.add(0, 1, 2, "Network Stream")
+        popup.menu.add(0, 2, 3, "Open File")
+        popup.menu.add(0, 3, 4, "Settings")
 
         popup.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
+                5 -> {
+                    scanMediaLibrary()
+                    true
+                }
                 1 -> {
                     val helper = Utils.OpenUrlDialog(requireContext())
                     with(helper) {
@@ -440,6 +450,14 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         } else {
             permissionLauncher.launch(permission)
         }
+    }
+
+    /**
+     * Public entry point for other UI surfaces (e.g. MeFragment's quick action)
+     * to request a fresh library scan. Forwards to the private worker.
+     */
+    fun userRequestedRescan() {
+        scanMediaLibrary()
     }
 
     private fun scanMediaLibrary() {
@@ -627,30 +645,29 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun updateTopBarUI(itemCount: Int = 0) {
+        binding.folderCountSubtitleTxt.isVisible = false
+        binding.folderCountSubtitleTxt.text = ""
+
         if (currentFolderId != null) {
             // Inside Folder View - MX Player does NOT show number of videos in top bar!
             binding.navBackBtn.isVisible = true
             binding.appTitleTxt.text = currentFolderName
-            binding.folderCountSubtitleTxt.isVisible = false
-            binding.folderCountSubtitleTxt.text = ""
-            binding.viewModeBtn.setImageResource(
-                if (isGridMode) R.drawable.ic_view_list_24dp else R.drawable.ic_view_module_24dp
-            )
+            binding.folderAllBtn.setImageResource(R.drawable.ic_folder_all_24dp)
         } else if (!isFolderView) {
             // All Videos View
             binding.navBackBtn.isVisible = true
             binding.appTitleTxt.text = "All Videos"
-            binding.folderCountSubtitleTxt.isVisible = false
-            binding.folderCountSubtitleTxt.text = ""
-            binding.viewModeBtn.setImageResource(R.drawable.ic_folder_24dp)
+            binding.folderAllBtn.setImageResource(R.drawable.ic_folder_24dp)
         } else {
             // Root Folders View
             binding.navBackBtn.isVisible = false
             binding.appTitleTxt.text = "Folders"
-            binding.folderCountSubtitleTxt.isVisible = false
-            binding.folderCountSubtitleTxt.text = ""
-            binding.viewModeBtn.setImageResource(R.drawable.ic_folder_all_24dp)
+            binding.folderAllBtn.setImageResource(R.drawable.ic_folder_all_24dp)
         }
+
+        binding.viewModeBtn.setImageResource(
+            if (isGridMode) R.drawable.ic_view_list_24dp else R.drawable.ic_mx_layout_switcher
+        )
     }
 
     private fun markVideoWatched(video: MediaVideo) {

@@ -1,3 +1,8 @@
+// See PlayerActivity.kt for context on the deprecated AndroidX media compat
+// classes. MediaSessionCompat is the only path that works with our libmpv
+// playback engine; migration to androidx.media3 is tracked separately.
+@file:Suppress("DEPRECATION")
+
 package com.ahmedtrooper.prism
 
 import android.annotation.SuppressLint

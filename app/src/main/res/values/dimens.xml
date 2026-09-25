@@ -12,7 +12,7 @@
     <dimen name="radius_hud">12dp</dimen>
     <dimen name="radius_dialog">28dp</dimen>
 
-    <dimen name="elevation_appbar">4dp</dimen>
+    <dimen name="elevation_appbar">0dp</dimen>
     <dimen name="elevation_hud">8dp</dimen>
 
     <!-- Typography -->
@@ -22,7 +22,7 @@
     <dimen name="text_caption">11sp</dimen>
 
     <!-- AppBar / Rows -->
-    <dimen name="appbar_height">64dp</dimen>
+    <dimen name="appbar_height">56dp</dimen>
     <dimen name="row_folder_height">72dp</dimen>
     <dimen name="row_video_height">80dp</dimen>
     <dimen name="touch_target">48dp</dimen>

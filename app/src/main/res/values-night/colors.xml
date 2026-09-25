@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Modern MX Player Night Theme Colors -->
+    <color name="mx_window_bg">#121214</color>
+    <color name="mx_text_primary_theme">#FFFFFF</color>
+    <color name="mx_text_secondary_theme">#A0A0A0</color>
+</resources>
