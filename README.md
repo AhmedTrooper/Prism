@@ -109,7 +109,7 @@ Prism provides two product flavors to support different distribution models and 
 
 ### 2. Player Controls & Decoder Switcher
 * **Decoder Toggle**: Instant switching between `HW+` (Hardware Plus), `HW` (MediaCodec), and `SW` (Software FFmpeg) directly from the top bar.
-* **Aspect Ratio Control**: Switch between Fit to Screen, Stretch, Crop / Zoom, 16:9, 4:3, and 21:9.
+* **Aspect Ratio Control**: Defaults to **Crop / Zoom** — the video fills the entire screen with no letterbox bars by trimming the long edges to match the screen aspect. Tap the aspect icon to cycle through Fit to Screen, Crop / Zoom, 16:9, Stretch, and 100% Original.
 * **Audio & Subtitle Track Selectors**:
   * Tap the audio or subtitle icon in the top bar to open a single-choice list of every embedded track, with the currently selected one highlighted. Pick one to switch.
   * Long-press the same icon to cycle to the next track without opening the list. The `#` and `j` keyboard shortcuts (and the MEDIA_AUDIO_TRACK / CAPTIONS media keys) still cycle too.

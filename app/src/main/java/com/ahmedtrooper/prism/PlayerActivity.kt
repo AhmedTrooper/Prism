@@ -1609,7 +1609,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
             ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
     }
 
-    private var currentAspectIndex = 0
+    private var currentAspectIndex = 1
     private fun cycleAspectRatio() {
         val aspectModes = arrayOf(
             Pair("Fit to screen", "-1" to 0.0),

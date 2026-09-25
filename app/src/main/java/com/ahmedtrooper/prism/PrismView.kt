@@ -61,6 +61,10 @@ internal class PrismView(context: Context, attrs: AttributeSet) : BasePrismView(
 
         PrismLib.setOptionString("gpu-context", "android")
         PrismLib.setOptionString("opengl-es", "yes")
+        // Default to Crop / Zoom — fill the entire screen with no letterbox bars
+        // by letting panscan crop the sides, matching modern phone-player UX.
+        PrismLib.setOptionString("panscan", "1.0")
+        PrismLib.setOptionString("video-aspect-override", "-1")
         PrismLib.setOptionString("hwdec", hwdec)
         PrismLib.setOptionString("hwdec-codecs", "h264,hevc,mpeg4,mpeg2video,vp8,vp9,av1")
         PrismLib.setOptionString("ao", "audiotrack,opensles")
