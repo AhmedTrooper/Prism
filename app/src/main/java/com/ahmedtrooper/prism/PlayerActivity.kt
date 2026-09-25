@@ -2097,7 +2097,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         showToast("Zoom reset", true)
         binding.zoomCard.visibility = View.VISIBLE
         fadeHandler.removeCallbacks(fadeHUDsRunnable)
-        fadeHandler.postDelayed(fadeHUDsRunnable, 800L)
+        fadeHandler.postDelayed(fadeHUDsRunnable, HUD_CARD_DISPLAY_TIMEOUT)
     }
 
     private val abLoop = ABLoopController()
@@ -2131,7 +2131,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
 
     private fun fadeGestureText() {
         fadeHandler.removeCallbacks(fadeHUDsRunnable)
-        fadeHandler.postDelayed(fadeHUDsRunnable, 600L)
+        fadeHandler.postDelayed(fadeHUDsRunnable, HUD_CARD_DISPLAY_TIMEOUT)
     }
 
     override fun onPropertyChange(p: PropertyChange, diff: Float, extra: Float) {
@@ -2236,7 +2236,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
                 if (pausedForSeek == 1)
                     player.paused = false
                 fadeHandler.removeCallbacks(fadeHUDsRunnable)
-                fadeHandler.postDelayed(fadeHUDsRunnable, 600L)
+                fadeHandler.postDelayed(fadeHUDsRunnable, HUD_CARD_DISPLAY_TIMEOUT)
             }
 
             /* Tap gestures */
@@ -2259,7 +2259,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
                 binding.seekDeltaTxt.text = diffText
                 binding.seekTargetTxt.text = "${Utils.prettyTime(newPos)} / ${Utils.prettyTime(psc.durationSec)}"
                 fadeHandler.removeCallbacks(fadeHUDsRunnable)
-                fadeHandler.postDelayed(fadeHUDsRunnable, 600L)
+                fadeHandler.postDelayed(fadeHUDsRunnable, HUD_CARD_DISPLAY_TIMEOUT)
             }
             PropertyChange.PlayPause -> player.cyclePause()
             PropertyChange.Custom -> {
@@ -2283,7 +2283,7 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
                     binding.brightnessCard.visibility = View.GONE
                     binding.zoomCard.visibility = View.VISIBLE
                     fadeHandler.removeCallbacks(fadeHUDsRunnable)
-                    fadeHandler.postDelayed(fadeHUDsRunnable, 800L)
+                    fadeHandler.postDelayed(fadeHUDsRunnable, HUD_CARD_DISPLAY_TIMEOUT)
                 }
             }
             PropertyChange.Pan -> {
@@ -2306,6 +2306,8 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
         private const val CONTROLS_DISPLAY_TIMEOUT = 1500L
         // how long controls fade to disappear (ms)
         private const val CONTROLS_FADE_DURATION = 500L
+        // how long gesture HUD cards (zoom percent, seek delta, brightness, volume) stay visible after a gesture (ms)
+        private const val HUD_CARD_DISPLAY_TIMEOUT = 2500L
         // smallest aspect ratio that is considered non-square
         private const val ASPECT_RATIO_MIN = 1.2f // covers 5:4 and up
         // fraction to which audio volume is ducked on loss of audio focus

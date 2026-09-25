@@ -127,6 +127,7 @@ Prism provides two product flavors to support different distribution models and 
 * **Double-Tap**: 10-second skip forward (right side) or backward (left side).
 * **Two-Finger Pinch-to-Zoom & Pan**: Zoom video from 50% to 400% with smooth two-finger frame repositioning.
 * **Single Tap**: Toggle controls overlay on and off.
+* **HUD Cards Auto-Dismiss**: Every gesture overlay card (zoom percent, seek delta, brightness percentage, volume percentage) auto-hides after **2.5 seconds** of inactivity so the text stays legible before fading out cleanly.
 
 ### 4. Codec & Format Compatibility
 * **Audio**: AC3 (Dolby Digital), E-AC3 (Dolby Digital Plus), DTS, DTS-HD, TrueHD, AAC, MP3, FLAC, Opus, Vorbis.
