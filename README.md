@@ -111,8 +111,9 @@ Prism provides two product flavors to support different distribution models and 
 * **Decoder Toggle**: Instant switching between `HW+` (Hardware Plus), `HW` (MediaCodec), and `SW` (Software FFmpeg) directly from the top bar.
 * **Aspect Ratio Control**: Switch between Fit to Screen, Stretch, Crop / Zoom, 16:9, 4:3, and 21:9.
 * **Audio & Subtitle Track Selectors**:
-  * Switch between multiple embedded audio tracks.
-  * Select embedded or external subtitles (`.srt`, `.ass`, `.vtt`).
+  * Tap the audio or subtitle icon in the top bar to open a single-choice list of every embedded track, with the currently selected one highlighted. Pick one to switch.
+  * Long-press the same icon to cycle to the next track without opening the list. The `#` and `j` keyboard shortcuts (and the MEDIA_AUDIO_TRACK / CAPTIONS media keys) still cycle too.
+  * Subtitle picker also exposes the secondary subtitle slot for `.srt` / `.ass` / `.vtt` files alongside the embedded tracks.
   * Subtitle sync offset adjustment (±0.1s increments).
   * High-quality stylized subtitle rendering via `libass`.
 * **Background & PiP**: Support for Picture-in-Picture windowing and background audio playback.

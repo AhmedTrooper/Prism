@@ -218,8 +218,8 @@ class PlayerActivity : AppCompatActivity(), PrismLib.EventObserver, TouchGesture
                 autoRotationMode = "manual"
                 cycleOrientation()
             }
-            cycleAudioBtn.setOnClickListener { cycleAudio() }
-            cycleSubsBtn.setOnClickListener { cycleSub() }
+            cycleAudioBtn.setOnClickListener { pickAudio() }
+            cycleSubsBtn.setOnClickListener { pickSub() }
             playBtn.setOnClickListener { player.cyclePause() }
             cycleDecoderBtn.setOnClickListener { pickDecoder() }
             cycleSpeedBtn.setOnClickListener { cycleSpeed() }
