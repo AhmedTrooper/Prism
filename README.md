@@ -204,6 +204,83 @@ Reports land in `mobile/app/build/reports/tests/testDefaultDebugUnitTest/index.h
 
 ---
 
+## Prism Desktop (Tauri v2)
+
+A native Windows, macOS, and Linux build of Prism that mirrors the Android player on a desktop layout. It uses the same brand colors, gesture vocabulary, and shortcut ergonomics, but ships them through a webview that talks to Rust and `libmpv` over a typed IPC bridge.
+
+### Stack
+
+* **Tauri v2** for the native shell (Rust backend, system webview frontend, single binary distribution).
+* **React 19 + Vite 8 + TypeScript 6** for the renderer.
+* **Tailwind CSS v4** (`@tailwindcss/vite`) for raw utility styling with a brand-token `@theme` block — no component library, every pixel is direct.
+* **Zustand 5** for cross-feature stores (theme, window chrome, command palette, toasts).
+* **Zod 4** for runtime validation of every IPC payload.
+* **Vitest 5** for unit tests, **ESLint 10 + typescript-eslint** for linting.
+
+### Feature-Sliced Layout
+
+Every feature under `desktop/src/features/` shares the same internal shape so a thousand features can be added without drift:
+
+```
+features/<feature>/
+  components/  # React UI for this feature
+  hooks/       # useXxx hooks scoped to this feature
+  stores/      # Zustand stores scoped to this feature
+  schemas/     # Zod schemas for IPC + boundary inputs
+  lib/         # Pure helpers (testable in isolation)
+  api/         # Wrappers around invokeCommand(...)
+  types.ts     # Public TS types
+  index.ts     # Public surface — re-export only what callers need
+```
+
+`features/_example/` is a fully-implemented reference: store, hook, schema, lib, API client, component, and barrel — copy/rename it to spin up a new feature.
+
+### Typed IPC Bridge
+
+`desktop/src/ipc/` is the contract between renderer and Rust:
+
+* `types.ts` declares the `IpcCommands` and `IpcEvents` registries (args/result shapes, optional zod schemas).
+* `commands.ts` exposes `invokeCommand("name", args)` with full autocomplete and runtime validation.
+* `events.ts` exposes `listenEvent("player:position", payload => ...)` typed listeners.
+* `registry.ts` maps each command name to its zod schemas.
+
+Every Rust `#[tauri::command]` declaration on the backend has a matching entry here so adding a command is a three-file change (Rust + `types.ts` + `registry.ts`).
+
+### Building the Desktop App
+
+```bash
+cd desktop
+bun install
+bun run dev      # vite dev server on http://localhost:1420
+bun run build    # tsc + vite production build
+bun run tauri dev    # full Tauri shell with the dev build
+bun run tauri build  # platform-native release binary
+```
+
+### Desktop Tests
+
+```bash
+cd desktop
+bun run test           # vitest unit tests
+bun run test:coverage  # v8 coverage report
+bun run typecheck      # tsc --noEmit
+bun run lint           # eslint .
+```
+
+### Desktop Rust Crate
+
+The Rust backend lives at `desktop/src-tauri/`:
+
+```bash
+cargo test  --manifest-path desktop/src-tauri/Cargo.toml
+cargo clippy --manifest-path desktop/src-tauri/Cargo.toml -- -D warnings
+cargo fmt  --manifest-path desktop/src-tauri/Cargo.toml --check
+```
+
+The crate ships `greet`, `ping`, and `app_info` commands out of the box; the player will gain `library:*`, `player:*`, and `streams:*` commands as those features land.
+
+---
+
 ## License
 * **Original wrapper code** (mpv-android by Ilya Zhuravlev and sfan5): [LICENSE](LICENSE) — MIT License, preserved verbatim with all original authors.
 * **Prism original code** (Md. Ramjan Miah, https://github.com/removet-v): [LICENSE-APACHE](LICENSE-APACHE) — Apache License, Version 2.0.

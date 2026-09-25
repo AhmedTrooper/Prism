@@ -1,0 +1,5 @@
+/* Tailwind v4 + Prism brand tokens live under styles/.
+   This file is the entry point imported by main.tsx so bundlers stay
+   pointed at one canonical path. */
+
+@import "./styles/tailwind.css";

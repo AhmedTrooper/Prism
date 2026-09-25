@@ -1,0 +1,15 @@
+/* Prism brand tokens — declared as Tailwind v4 @theme variables so they
+   flow into utility classes (bg-prism-primary, text-prism-on-primary, …).
+   Mirror these from the Android side where the cobalt #007AFF is the brand. */
+
+@theme {
+  --color-prism-primary: #007aff;
+  --color-prism-primary-dark: #0066d6;
+  --color-prism-on-primary: #ffffff;
+
+  --color-prism-accent: #5e5ce6;
+  --color-prism-warning: #ff9f0a;
+
+  --color-prism-track-new: #e53935;
+  --color-prism-volume-boost: #ff8c00;
+}

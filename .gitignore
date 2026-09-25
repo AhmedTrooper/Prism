@@ -25,3 +25,13 @@
 *.jar
 *.dex
 *.hprof
+
+# Tauri / Node desktop build artifacts
+**/node_modules/
+**/dist/
+**/coverage/
+**/.vite/
+**/.next/
+# Rust-side build artifacts (release binaries and target dir)
+**/src-tauri/target/
+**/src-tauri/gen/
