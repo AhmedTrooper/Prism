@@ -54,8 +54,8 @@ Prism provides two product flavors to support different distribution models and 
 
 | Flavor | Minimum SDK | Storage Permission | Target Audience | Build Command |
 | :--- | :--- | :--- | :--- | :--- |
-| **`default`** | Android 6.0 (API 23) | Scoped Storage (`READ_MEDIA_VIDEO`) | Google Play Store | `./gradlew assembleDefaultRelease` |
-| **`allstorage`** | Android 11 (API 30) | `MANAGE_EXTERNAL_STORAGE` | Direct Download / F-Droid / Sideload | `./gradlew assembleAllstorageRelease` |
+| **`default`** | Android 6.0 (API 23) | Scoped Storage (`READ_MEDIA_VIDEO`) | Google Play Store | `cd mobile && ./gradlew assembleDefaultRelease` |
+| **`allstorage`** | Android 11 (API 30) | `MANAGE_EXTERNAL_STORAGE` | Direct Download / F-Droid / Sideload | `cd mobile && ./gradlew assembleAllstorageRelease` |
 
 * **`default`**: Follows modern Android scoped storage policies and is fully compliant with Google Play Store guidelines.
 * **`allstorage`**: Replaces the obsolete legacy storage bypass (`api29`) with Android 11+'s `MANAGE_EXTERNAL_STORAGE` permission, granting unrestricted access to SD cards, USB OTG, hidden dotfiles, and external subtitles without downgrading API level.
@@ -143,7 +143,7 @@ Prism provides two product flavors to support different distribution models and 
 * Android SDK 36 (Build Tools 36.0.0)
 * Android NDK 27.2.12479018 (specified in `ndk.properties`)
 * JDK 17 or JDK 21
-* Gradle 9.8.0 (managed by the wrapper — `./gradlew` will fetch it on first run)
+* Gradle 9.8.0 (managed by the wrapper — `cd mobile && ./gradlew` will fetch it on first run)
 
 ### Build Toolchain
 
@@ -157,46 +157,50 @@ Prism provides two product flavors to support different distribution models and 
 
 ### Build Debug APK
 ```bash
+cd mobile
+
 # Standard Google Play build (Scoped Storage)
 ./gradlew assembleDefaultDebug
 
 # All Storage build (unrestricted filesystem access)
 ./gradlew assembleAllstorageDebug
 ```
-Output APKs will be in `app/build/outputs/apk/<flavor>/debug/`:
+Output APKs will be in `mobile/app/build/outputs/apk/<flavor>/debug/`:
 * `app-default-arm64-v8a-debug.apk`
 * `app-allstorage-arm64-v8a-debug.apk`
 
 ### Build Release APK
 ```bash
+cd mobile
+
 # Standard Google Play build
 ./gradlew assembleDefaultRelease
 
 # All Storage build
 ./gradlew assembleAllstorageRelease
 ```
-Output APKs will be in `app/build/outputs/apk/<flavor>/release/`:
+Output APKs will be in `mobile/app/build/outputs/apk/<flavor>/release/`:
 * `app-default-arm64-v8a-release-unsigned.apk`
 * `app-allstorage-arm64-v8a-release-unsigned.apk`
 
 ### Compiling Native Dependencies
-Prism does **not** ship prebuilt native binaries in this repository — the `app/src/main/libs/` and `app/src/main/jniLibs/` directories are intentionally gitignored. The Gradle build picks them up automatically once they exist, but a fresh clone will not produce a working APK until the native libraries are compiled and copied into place.
+Prism does **not** ship prebuilt native binaries in this repository — the `mobile/app/src/main/libs/` and `mobile/app/src/main/jniLibs/` directories are intentionally gitignored. The Gradle build picks them up automatically once they exist, but a fresh clone will not produce a working APK until the native libraries are compiled and copied into place.
 
-To build `libmpv`, `ffmpeg`, and related libraries from source, follow the instructions in [`buildscripts/README.md`](buildscripts/README.md). The short version on Linux/macOS is:
+To build `libmpv`, `ffmpeg`, and related libraries from source, follow the instructions in [`mobile/buildscripts/README.md`](mobile/buildscripts/README.md). The short version on Linux/macOS is:
 
 ```bash
-cd buildscripts
+cd mobile/buildscripts
 ./download.sh         # installs SDK, NDK, and source tarballs
 ./buildall.sh --arch arm64 mpv   # builds for arm64-v8a (add other archs as needed)
 ```
 
-After that finishes, the `.so` files land in `app/src/main/libs/<abi>/` and `./gradlew assembleDefaultDebug` will produce a working APK.
+After that finishes, the `.so` files land in `mobile/app/src/main/libs/<abi>/` and `cd mobile && ./gradlew assembleDefaultDebug` will produce a working APK.
 
 ### Run Unit Tests
 ```bash
-./gradlew :app:testDefaultDebugUnitTest
+cd mobile && ./gradlew :app:testDefaultDebugUnitTest
 ```
-Reports land in `app/build/reports/tests/testDefaultDebugUnitTest/index.html`. The current suite covers the online streams catalog, A-B loop math, media browser filtering, and shared utilities.
+Reports land in `mobile/app/build/reports/tests/testDefaultDebugUnitTest/index.html`. The current suite covers the online streams catalog, A-B loop math, media browser filtering, and shared utilities.
 
 ---
 
@@ -204,4 +208,4 @@ Reports land in `app/build/reports/tests/testDefaultDebugUnitTest/index.html`. T
 * **Original wrapper code** (mpv-android by Ilya Zhuravlev and sfan5): [LICENSE](LICENSE) — MIT License, preserved verbatim with all original authors.
 * **Prism original code** (Md. Ramjan Miah, https://github.com/removet-v): [LICENSE-APACHE](LICENSE-APACHE) — Apache License, Version 2.0.
 * **Compiled Application (APK)**: Distributed under the terms of the GNU General Public License v3.0 or later because the built APK bundles GPLv3-licensed `libmpv` and FFmpeg shared libraries. The source code itself stays under MIT / Apache 2.0; only the compiled binary that links against libmpv and FFmpeg falls under GPLv3.
-* See [LICENSE](LICENSE), [LICENSE-APACHE](LICENSE-APACHE), and [docs/licenses.html](docs/licenses.html) for complete component attribution and license text.
+* See [LICENSE](LICENSE), [LICENSE-APACHE](LICENSE-APACHE), and [mobile/docs/licenses.html](mobile/docs/licenses.html) for complete component attribution and license text.

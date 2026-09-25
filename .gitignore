@@ -1,15 +1,17 @@
 .gdb_history
-bin
-libs
-obj
-.gradle/
-.idea/
-.code/
-.kotlin/
+**/bin/
+**/libs/
+**/obj/
+**/.gradle/
+**/.idea/
+**/.code/
+**/.kotlin/
 **/*.iml
-build/
-local.properties
-ndk.properties
+**/build/
+**/local.properties
+**/ndk.properties
+**/captures/
+**/.cxx/
 *~
 .aider*
 /assets/
@@ -23,6 +25,3 @@ ndk.properties
 *.jar
 *.dex
 *.hprof
-# Adb pull targets (screenshots and screen recordings captured during development)
-captures/
-.cxx/
