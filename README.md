@@ -171,7 +171,17 @@ Output APKs will be in `app/build/outputs/apk/<flavor>/release/`:
 * `app-allstorage-arm64-v8a-release-unsigned.apk`
 
 ### Compiling Native Dependencies
-To recompile `libmpv`, `ffmpeg`, and related libraries from source, follow the instructions in [`buildscripts/README.md`](buildscripts/README.md).
+Prism does **not** ship prebuilt native binaries in this repository — the `app/src/main/libs/` and `app/src/main/jniLibs/` directories are intentionally gitignored. The Gradle build picks them up automatically once they exist, but a fresh clone will not produce a working APK until the native libraries are compiled and copied into place.
+
+To build `libmpv`, `ffmpeg`, and related libraries from source, follow the instructions in [`buildscripts/README.md`](buildscripts/README.md). The short version on Linux/macOS is:
+
+```bash
+cd buildscripts
+./download.sh         # installs SDK, NDK, and source tarballs
+./buildall.sh --arch arm64 mpv   # builds for arm64-v8a (add other archs as needed)
+```
+
+After that finishes, the `.so` files land in `app/src/main/libs/<abi>/` and `./gradlew assembleDefaultDebug` will produce a working APK.
 
 ### Run Unit Tests
 ```bash
